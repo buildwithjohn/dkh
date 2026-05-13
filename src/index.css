@@ -1,1 +1,92 @@
-/* Reset handled in App.jsx */
+/* ─── DESIGN TOKENS — global, used by every page ─────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,700;1,9..144,900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink:        #09152A;
+  --ink2:       #0E1D3A;
+  --ink3:       #152444;
+  --ink4:       #1F3258;
+  --warm:       #FFFFFF;
+  --warm2:      #F5F7FB;
+  --warm3:      #EEF3FB;
+  --border-d:   rgba(255,255,255,0.08);
+  --border-l:   rgba(9,21,42,0.10);
+  --gold:       #2563EB;
+  --gold2:      #4A80F5;
+  --gold3:      #93C5FD;
+  --blue-glow:  rgba(37,99,235,0.18);
+  --white:      #FFFFFF;
+  --muted-d:    rgba(255,255,255,0.55);
+  --muted-l:    #4E6389;
+  --muted-l2:   #7A8DAE;
+  --serif:      'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans:       'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --t-display:  clamp(3rem, 8vw, 8rem);
+  --t-h1:       clamp(2.4rem, 5.5vw, 5.5rem);
+  --t-h2:       clamp(1.9rem, 4vw, 3.6rem);
+  --t-h3:       clamp(1.3rem, 2.3vw, 1.8rem);
+  --t-body:     clamp(.92rem, 1.1vw, 1rem);
+  --t-small:    .82rem;
+  --t-eyebrow:  .58rem;
+  --gutter:     7vw;
+  --gutter-sm:  5vw;
+  --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --shadow-1:   0 4px 12px rgba(9,21,42,0.06);
+  --shadow-2:   0 18px 50px -20px rgba(9,21,42,0.18);
+  --shadow-3:   0 30px 80px -30px rgba(9,21,42,0.30);
+}
+
+html, body, #root {
+  font-family: var(--sans);
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--warm);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+.eyebrow { font-size: var(--t-eyebrow); font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.8rem; }
+.eyebrow.dark::before, .eyebrow.light::before { content: ''; width: 28px; height: 1.5px; background: var(--gold); }
+.eyebrow.dark { color: var(--gold); }
+.eyebrow.light { color: var(--gold3); }
+.eyebrow.light::before { background: var(--gold3); }
+
+.display-serif { font-family: var(--serif); font-weight: 300; line-height: 0.95; letter-spacing: -0.02em; }
+.display-serif em { font-style: italic; color: var(--gold); }
+.display-serif strong { font-weight: 700; }
+
+.h-serif { font-family: var(--serif); font-weight: 300; line-height: 1.08; letter-spacing: -0.015em; }
+.h-serif em { font-style: italic; color: var(--gold); }
+.h-serif strong { font-weight: 600; }
+
+.h-sans { font-family: var(--sans); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+.h-sans.thin { font-weight: 200; }
+
+.btn { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.95rem 1.9rem; border-radius: 4px; cursor: pointer; transition: all 0.25s var(--ease-out); border: 1.5px solid transparent; background: var(--gold); color: var(--white); white-space: nowrap; text-decoration: none; }
+.btn:hover { background: var(--gold2); transform: translateY(-1px); color: var(--white); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: rgba(9,21,42,0.18); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: transparent; }
+.btn-ghost-light { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.30); }
+.btn-ghost-light:hover { border-color: var(--white); background: rgba(255,255,255,0.05); }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.bi { vertical-align: -0.125em; }
+*:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+
+.card-elevate { background: var(--warm); border: 1px solid var(--border-l); transition: transform 0.35s var(--ease-out), box-shadow 0.35s, border-color 0.25s; }
+.card-elevate:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--gold); }

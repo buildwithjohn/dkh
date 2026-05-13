@@ -1,77 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useParams, useNavigate, Navigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { BaseStyles } from "../lib/BaseStyles";
-import { SharedFooter } from "../lib/SharedFooter";
+import { motion, AnimatePresence } from "framer-motion";
+import Layout from "../components/Layout";
+import Reveal from "../components/Reveal";
 import { useSubscribe } from "../lib/subscribe";
 import { getPostBySlug, getRelatedPosts } from "../data/posts";
 
 export default function NewsPost() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const { status, message, subscribe } = useSubscribe();
-
   const post = getPostBySlug(slug);
   const related = getRelatedPosts(slug, 3);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", fn);
-    return () => window.removeEventListener("scroll", fn);
-  }, []);
-
-  useEffect(() => { window.scrollTo(0, 0); }, [slug]);
-
-  // Update document title and meta description for SEO + social sharing
-  useEffect(() => {
-    if (!post) return;
-    document.title = `${post.title} · Dr. Kunle Hamilton`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) metaDesc.setAttribute("content", post.excerpt);
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute("content", post.title);
-    const ogDesc = document.querySelector('meta[property="og:description"]');
-    if (ogDesc) ogDesc.setAttribute("content", post.excerpt);
-  }, [post]);
+  const [email, setEmail] = useState("");
+  const { status, message, subscribe } = useSubscribe();
 
   if (!post) return <Navigate to="/news" replace />;
 
   const fmt = (d) =>
-    new Date(d).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
-  // Parse body — split on blank lines, render paragraphs.
-  // Bold inline: **text** → <strong>text</strong>
   const renderParagraph = (text, key) => {
     const isHeading = text.startsWith("**") && text.endsWith("**") && !text.slice(2, -2).includes("**");
-    if (isHeading) {
-      return <h3 key={key} className="post-h3">{text.slice(2, -2)}</h3>;
-    }
+    if (isHeading) return <h3 key={key} className="np-h3">{text.slice(2, -2)}</h3>;
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
     return (
-      <p key={key} className="post-p">
+      <p key={key} className="np-p">
         {parts.map((part, i) =>
-          part.startsWith("**") && part.endsWith("**") ? (
-            <strong key={i}>{part.slice(2, -2)}</strong>
-          ) : (
-            <span key={i}>{part}</span>
-          )
+          part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : <span key={i}>{part}</span>
         )}
       </p>
     );
   };
 
-  const paragraphs = post.body
-    .trim()
-    .split(/\n\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+  const paragraphs = post.body.trim().split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -81,168 +42,153 @@ export default function NewsPost() {
   };
 
   return (
-    <>
-      <BaseStyles />
+    <Layout title={post.title} description={post.excerpt}>
       <style>{`
-        .post-hero { position: relative; padding: 10rem 7vw 4rem; background: var(--ink); color: var(--white); overflow: hidden; }
-        .post-hero-bg { position: absolute; inset: 0; opacity: .25; }
-        .post-hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: blur(20px) saturate(0.6); }
-        .post-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(9,21,42,.6) 0%, rgba(9,21,42,.95) 100%); }
-        .post-hero-inner { position: relative; z-index: 2; max-width: 920px; }
-        .post-hero-back { display: inline-flex; align-items: center; gap: .5rem; font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #93C5FD; margin-bottom: 2.5rem; transition: gap .2s; }
-        .post-hero-back:hover { gap: .8rem; }
-        .post-hero-meta { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; }
-        .post-hero-cat { font-size: .58rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); padding: .35rem .75rem; border: 1px solid var(--gold); border-radius: 2px; }
-        .post-hero-date { font-size: .72rem; font-weight: 300; color: rgba(255,255,255,.55); }
-        .post-hero-read { font-size: .72rem; font-weight: 300; color: rgba(255,255,255,.55); }
-        .post-hero h1 { font-family: var(--serif); font-size: clamp(2.2rem, 5.5vw, 4.4rem); font-weight: 300; line-height: 1.08; letter-spacing: -.015em; margin-bottom: 1.5rem; }
-        .post-hero-excerpt { font-size: clamp(.95rem, 1.4vw, 1.1rem); font-weight: 300; line-height: 1.65; color: rgba(255,255,255,.75); max-width: 720px; font-style: italic; font-family: var(--serif); }
+        .np-hero { position: relative; padding: 9.5rem var(--gutter) 4.5rem; background: var(--ink); color: var(--white); overflow: hidden; }
+        .np-hero-bg { position: absolute; inset: 0; opacity: 0.22; }
+        .np-hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: blur(18px) saturate(0.6); }
+        .np-hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(9,21,42,0.55) 0%, rgba(9,21,42,0.95) 100%); }
+        .np-hero-inner { position: relative; z-index: 2; max-width: 900px; }
+        .np-hero-back { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold3); margin-bottom: 2.5rem; transition: gap 0.2s; }
+        .np-hero-back:hover { gap: 0.9rem; }
+        .np-hero-meta { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; }
+        .np-hero-cat { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); padding: 0.35rem 0.85rem; border: 1px solid var(--gold); border-radius: 2px; }
+        .np-hero-date, .np-hero-read { font-size: 0.72rem; font-weight: 300; color: rgba(255,255,255,0.55); display: inline-flex; align-items: center; gap: 0.35rem; }
+        .np-hero-date i, .np-hero-read i { color: var(--gold3); }
+        .np-hero h1 { font-family: var(--serif); font-size: clamp(2.2rem, 5.5vw, 4.4rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.015em; margin-bottom: 1.5rem; }
+        .np-hero h1 strong { font-weight: 700; }
+        .np-hero-excerpt { font-family: var(--serif); font-size: clamp(1rem, 1.4vw, 1.15rem); font-weight: 400; font-style: italic; line-height: 1.65; color: rgba(255,255,255,0.78); max-width: 720px; }
 
-        .post-image-feature { width: 100%; aspect-ratio: 16/8; overflow: hidden; }
-        .post-image-feature img { width: 100%; height: 100%; object-fit: cover; object-position: center 22%; }
+        .np-feature-img { width: 100%; aspect-ratio: 16/8; overflow: hidden; }
+        .np-feature-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 22%; }
 
-        .post-body { max-width: 720px; margin: 0 auto; padding: 4.5rem 7vw 5rem; }
-        .post-p { font-family: 'Charter', 'Georgia', serif; font-size: 1.1rem; line-height: 1.85; color: var(--ink); margin-bottom: 1.4rem; font-weight: 400; }
-        .post-p:first-letter { /* could add drop-cap if desired */ }
-        .post-h3 { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; color: var(--ink); margin: 2.5rem 0 1rem; line-height: 1.3; letter-spacing: -.005em; }
+        .np-body { max-width: 720px; margin: 0 auto; padding: 4.5rem var(--gutter) 5rem; }
+        .np-p { font-family: 'Charter', 'Georgia', serif; font-size: 1.1rem; line-height: 1.85; color: var(--ink); margin-bottom: 1.4rem; font-weight: 400; }
+        .np-h3 { font-family: var(--serif); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin: 2.6rem 0 1rem; line-height: 1.3; letter-spacing: -0.005em; }
 
-        /* Mid-content subscribe block */
-        .post-subscribe { background: var(--warm2); border-top: 3px solid var(--gold); padding: 4rem 7vw; }
-        .post-subscribe-inner { max-width: 720px; margin: 0 auto; text-align: center; }
-        .post-subscribe-tag { font-size: .6rem; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
-        .post-subscribe h2 { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 300; color: var(--ink); margin-bottom: .8rem; line-height: 1.2; }
-        .post-subscribe h2 em { font-style: italic; color: var(--gold); }
-        .post-subscribe p { font-size: .9rem; font-weight: 300; line-height: 1.65; color: var(--muted-l); margin-bottom: 1.8rem; }
-        .post-subscribe-form { display: flex; gap: .6rem; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
-        .post-subscribe-form input { flex: 1; min-width: 200px; padding: .85rem 1rem; border: 1px solid var(--border-l); background: var(--warm); font-family: var(--sans); font-size: .9rem; outline: none; border-radius: 3px; }
-        .post-subscribe-form input:focus { border-color: var(--gold); }
-        .post-subscribe-form button { background: var(--gold); color: var(--white); border: none; font-size: .68rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; padding: 0 1.6rem; border-radius: 3px; cursor: pointer; transition: background .25s; }
-        .post-subscribe-form button:hover { background: var(--gold2); }
-        .post-subscribe-form button:disabled { opacity: .5; }
-        .post-subscribe-msg { margin-top: 1rem; font-size: .8rem; color: var(--gold); }
+        .np-share { max-width: 720px; margin: 0 auto; padding: 1.5rem var(--gutter); border-top: 1px solid var(--border-l); border-bottom: 1px solid var(--border-l); display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .np-share-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); }
+        .np-share-btns { display: flex; gap: 0.6rem; }
+        .np-share-btn { width: 38px; height: 38px; border: 1px solid var(--border-l); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted-l); font-size: 1rem; transition: all 0.25s; cursor: pointer; background: transparent; }
+        .np-share-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--white); transform: translateY(-2px); }
 
-        /* Related */
-        .related { padding: 5rem 7vw; background: var(--warm); }
-        .related-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; }
-        .related h3 { font-family: var(--serif); font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 300; color: var(--ink); }
-        .related h3 em { font-style: italic; color: var(--gold); }
-        .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        @media(max-width:900px){ .related-grid { grid-template-columns: 1fr; } }
-        .related-card { border: 1px solid var(--border-l); overflow: hidden; cursor: pointer; transition: all .35s; display: flex; flex-direction: column; }
-        .related-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px -20px rgba(9,21,42,.2); border-color: var(--gold); }
-        .related-card-img { aspect-ratio: 16/10; overflow: hidden; }
-        .related-card-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform .5s; }
-        .related-card:hover .related-card-img img { transform: scale(1.04); }
-        .related-card-body { padding: 1.3rem 1.4rem; }
-        .related-card-cat { font-size: .55rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: .5rem; display: block; }
-        .related-card-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 300; font-style: italic; color: var(--ink); line-height: 1.3; }
+        .np-subscribe { background: var(--warm2); border-top: 3px solid var(--gold); padding: 4rem var(--gutter); }
+        .np-subscribe-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+        .np-subscribe-eyebrow { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+        .np-subscribe h2 { font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 300; line-height: 1.2; color: var(--ink); margin-bottom: 0.7rem; }
+        .np-subscribe h2 em { font-style: italic; color: var(--gold); }
+        .np-subscribe p { font-size: 0.92rem; font-weight: 300; line-height: 1.65; color: var(--muted-l); margin-bottom: 1.8rem; }
+        .np-subscribe-form { display: flex; gap: 0.6rem; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+        .np-subscribe-form input { flex: 1; min-width: 200px; padding: 0.85rem 1rem; border: 1px solid var(--border-l); background: var(--warm); font-family: var(--sans); font-size: 0.9rem; outline: none; border-radius: 3px; }
+        .np-subscribe-form input:focus { border-color: var(--gold); }
+        .np-subscribe-msg { margin-top: 1rem; font-size: 0.85rem; color: var(--gold); }
+
+        .np-related { padding: 5rem var(--gutter); background: var(--warm); }
+        .np-related-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; }
+        .np-related h3 { font-family: var(--serif); font-size: clamp(1.7rem, 3.2vw, 2.4rem); font-weight: 300; color: var(--ink); }
+        .np-related h3 em { font-style: italic; color: var(--gold); }
+        .np-related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+        @media (max-width: 900px) { .np-related-grid { grid-template-columns: 1fr; } }
+        .np-rcard { border: 1px solid var(--border-l); border-radius: 4px; overflow: hidden; cursor: pointer; transition: all 0.35s var(--ease-out); display: flex; flex-direction: column; }
+        .np-rcard:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); border-color: var(--gold); }
+        .np-rcard-img { aspect-ratio: 16/10; overflow: hidden; }
+        .np-rcard-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform 0.5s; }
+        .np-rcard:hover .np-rcard-img img { transform: scale(1.04); }
+        .np-rcard-body { padding: 1.3rem 1.5rem; }
+        .np-rcard-cat { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; display: block; }
+        .np-rcard-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; font-style: italic; color: var(--ink); line-height: 1.3; }
       `}</style>
 
-      {/* Nav */}
-      <motion.header
-        className={`nav${scrolled ? " s" : ""}`}
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: .7 }}
-      >
-        <Link to="/" className="logo">Dr. Kunle <em>Hamilton</em></Link>
-        <div className="nav-links">
-          <Link to="/#about" className="nl">About</Link>
-          <Link to="/#books" className="nl">Books</Link>
-          <Link to="/#press" className="nl">Press</Link>
-          <Link to="/news" className="nl active">News</Link>
-          <Link to="/#speaking" className="nl">Speaking</Link>
-        </div>
-        <Link to="/#contact" className="nav-cta">Invite Dr. Hamilton</Link>
-        <button className="ham" onClick={() => setOpen(!open)} aria-label="Menu">
-          <span className="hl" /><span className="hl" /><span className="hl" />
-        </button>
-      </motion.header>
-
-      {open && (
-        <div className="mob">
-          <Link to="/" onClick={() => setOpen(false)}>Home</Link>
-          <Link to="/news" onClick={() => setOpen(false)}>News</Link>
-          <Link to="/#contact" onClick={() => setOpen(false)} className="nav-cta">Invite Dr. Hamilton</Link>
-        </div>
-      )}
-
       {/* Hero */}
-      <section className="post-hero">
-        <div className="post-hero-bg">
+      <section className="np-hero">
+        <div className="np-hero-bg">
           <img src={post.image} alt="" />
         </div>
         <motion.div
-          className="post-hero-inner"
+          className="np-hero-inner"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: .7 }}
+          transition={{ duration: 0.7 }}
         >
-          <Link to="/news" className="post-hero-back">← Back to all articles</Link>
-          <div className="post-hero-meta">
-            <span className="post-hero-cat">{post.category}</span>
-            <span className="post-hero-date">{fmt(post.date)}</span>
-            <span className="post-hero-read">· {post.readTime}</span>
+          <Link to="/news" className="np-hero-back">
+            <i className="bi bi-arrow-left" /> Back to all articles
+          </Link>
+          <div className="np-hero-meta">
+            <span className="np-hero-cat">{post.category}</span>
+            <span className="np-hero-date"><i className="bi bi-calendar3" /> {fmt(post.date)}</span>
+            <span className="np-hero-read"><i className="bi bi-clock" /> {post.readTime}</span>
           </div>
           <h1>{post.title}</h1>
-          <p className="post-hero-excerpt">{post.excerpt}</p>
+          <p className="np-hero-excerpt">{post.excerpt}</p>
         </motion.div>
       </section>
 
-      {/* Feature image */}
-      <div className="post-image-feature">
+      <div className="np-feature-img">
         <img src={post.image} alt={post.title} />
       </div>
 
-      {/* Body */}
-      <article className="post-body">
+      <article className="np-body">
         {paragraphs.map((p, i) => renderParagraph(p, i))}
       </article>
 
-      {/* Subscribe CTA */}
-      <section className="post-subscribe">
-        <div className="post-subscribe-inner">
-          <div className="post-subscribe-tag">Stay Connected</div>
+      {/* Share strip */}
+      <div className="np-share">
+        <span className="np-share-label"><i className="bi bi-share-fill" /> Share this article</span>
+        <div className="np-share-btns">
+          <button className="np-share-btn" onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`, "_blank")} aria-label="Share on Twitter">
+            <i className="bi bi-twitter-x" />
+          </button>
+          <button className="np-share-btn" onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, "_blank")} aria-label="Share on Facebook">
+            <i className="bi bi-facebook" />
+          </button>
+          <button className="np-share-btn" onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`, "_blank")} aria-label="Share on LinkedIn">
+            <i className="bi bi-linkedin" />
+          </button>
+          <button className="np-share-btn" onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(post.title + " " + window.location.href)}`, "_blank")} aria-label="Share on WhatsApp">
+            <i className="bi bi-whatsapp" />
+          </button>
+          <button className="np-share-btn" onClick={() => { navigator.clipboard.writeText(window.location.href); }} aria-label="Copy link">
+            <i className="bi bi-link-45deg" />
+          </button>
+        </div>
+      </div>
+
+      {/* Subscribe */}
+      <section className="np-subscribe">
+        <div className="np-subscribe-inner">
+          <div className="np-subscribe-eyebrow"><i className="bi bi-envelope-paper" /> Stay Connected</div>
           <h2>Get more from <em>Dr. Hamilton</em></h2>
           <p>New articles, books, sermons and media features — delivered directly to your inbox. No spam, ever.</p>
-          <form className="post-subscribe-form" onSubmit={handleSubscribe}>
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button type="submit" disabled={status === "submitting" || status === "success"}>
-              {status === "success" ? "Subscribed ✓" : status === "submitting" ? "..." : "Subscribe"}
+          <form className="np-subscribe-form" onSubmit={handleSubscribe}>
+            <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <button type="submit" className="btn" disabled={status === "submitting" || status === "success"}>
+              {status === "success" ? <><i className="bi bi-check-lg" /> Subscribed</> : status === "submitting" ? <><i className="bi bi-arrow-clockwise" /> ...</> : <>Subscribe <i className="bi bi-arrow-right" /></>}
             </button>
           </form>
-          {status === "success" && <p className="post-subscribe-msg">{message}</p>}
+          {status === "success" && <p className="np-subscribe-msg">{message}</p>}
         </div>
       </section>
 
       {/* Related */}
       {related.length > 0 && (
-        <section className="related">
-          <div className="related-hd">
+        <section className="np-related">
+          <div className="np-related-hd">
             <h3>More <em>articles</em></h3>
-            <Link to="/news" className="btn-ghost">All Articles →</Link>
+            <Link to="/news" className="btn btn-ghost">All Articles <i className="bi bi-arrow-right" /></Link>
           </div>
-          <div className="related-grid">
+          <div className="np-related-grid">
             {related.map((r) => (
-              <article key={r.slug} className="related-card" onClick={() => navigate(`/news/${r.slug}`)}>
-                <div className="related-card-img"><img src={r.image} alt={r.title} loading="lazy" /></div>
-                <div className="related-card-body">
-                  <span className="related-card-cat">{r.category}</span>
-                  <h4 className="related-card-title">{r.title}</h4>
+              <article key={r.slug} className="np-rcard" onClick={() => navigate(`/news/${r.slug}`)}>
+                <div className="np-rcard-img"><img src={`/thumbs${r.image}`} alt={r.title} loading="lazy" /></div>
+                <div className="np-rcard-body">
+                  <span className="np-rcard-cat">{r.category}</span>
+                  <h4 className="np-rcard-title">{r.title}</h4>
                 </div>
               </article>
             ))}
           </div>
         </section>
       )}
-
-      <SharedFooter />
-    </>
+    </Layout>
   );
 }
