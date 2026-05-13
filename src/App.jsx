@@ -1,18 +1,35 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
   motion, AnimatePresence,
   useScroll, useTransform, useInView,
   useMotionValue, useSpring, animate
 } from "framer-motion";
+import { usePaystack } from "./lib/paystack";
+import { SharedFooter } from "./lib/SharedFooter";
+import { posts as journalPosts } from "./data/posts";
 
-// IMG_1665 — white garment + blue sash, forward-facing mic — HERO
-const P1 = "/dkh-hero.jpg";
-// IMG_1666 — CelestialFocus teaching shot — ABOUT / CONTACT / PANELS
-const P2 = "/dkh-teaching.jpg";
-// Original formal headshot — supplementary panels
-const P3 = "/dkh-formal.jpg";
-// New profile photo — blue background, pink suit, mic
-const P4 = "/dkh-profile.jpg";
+// ── New professional studio portraits (2026 shoot) ──
+const PHOTO = {
+  hero: "/hero.jpg",                      // 3/4 turn, navy native + gold cross — main hero
+  heroThrone: "/hero-throne.jpg",         // seated on gold throne, white soutane — alt regal hero
+  about: "/about.jpg",                    // leaning, contemplative, hand-near-cheek — the scholar
+  press: "/press-thinker.jpg",            // hand on chin, thinking — journalist/author energy
+  speaking: "/speaking.jpg",              // white soutane + mic in hand — preacher/speaker
+  praiseville: "/ministry-praiseville.jpg", // white soutane head-on with lapel mic — CCC
+  shaddaiville: "/ministry-shaddaiville.jpg", // hand on chin contemplative — leadership
+  contact: "/contact.jpg",                // warm smile, head-on — approachable
+  profile: "/profile.jpg",                // clean studio headshot — avatar/footer
+  fullbody: "/fullbody.jpg",              // standing full body navy native
+  blueDress: "/portrait-blue.jpg",        // hands clasped blue native
+  preacher: "/profile-preacher.jpg",      // profile preaching shot
+};
+
+// Backwards-compat aliases for the existing JSX (will refactor inline below)
+const P1 = PHOTO.hero;
+const P2 = PHOTO.about;
+const P3 = PHOTO.fullbody;
+const P4 = PHOTO.profile;
 
 /* ─── STYLES ──────────────────────────────────────────────────────────────── */
 const Styles = () => (
@@ -119,8 +136,8 @@ const Styles = () => (
     @media(max-width:768px){ .hero { height:75vw; min-height:420px; } }
     .hero-photo {
       position:absolute; inset:0; width:100%; height:100%;
-      object-fit:cover; object-position:center 12%;
-      filter:brightness(.80) contrast(1.08) saturate(0.88);
+      object-fit:cover; object-position:center 28%;
+      filter:brightness(.78) contrast(1.05) saturate(0.92);
     }
     /* STYLISH GRADIENT — rich navy layers + electric blue wash */
     .hero-overlay {
@@ -285,6 +302,20 @@ const Styles = () => (
     .vg .vf-title { font-size:1rem; }
     .vg-src { font-size:.68rem; color:rgba(255,255,255,.25); margin-top:.3rem; font-weight:300; }
 
+
+    /* ── BUY MODAL ── */
+    .buy-overlay {
+      position: fixed; inset: 0; z-index: 9000;
+      background: rgba(9,21,42,0.75); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .buy-modal {
+      background: var(--warm); width: 100%; max-width: 480px;
+      padding: 2.5rem 2rem; border-top: 4px solid var(--gold);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+      max-height: 90vh; overflow-y: auto;
+    }
     /* ── BOOKS ── warm bg */
     .books { background:var(--warm2); border-top:1px solid var(--border-l); }
     .books-hd { padding:6rem 7vw; border-bottom:1px solid var(--border-l); }
@@ -515,14 +546,27 @@ function Nav() {
     window.addEventListener("scroll", fn);
     return () => window.removeEventListener("scroll", fn);
   }, []);
-  const links = ["About", "Ministries", "Videos", "Books", "Press", "Speaking", "Contact"];
+  const links = [
+    { label: "About", href: "#about" },
+    { label: "Ministries", href: "#ministries" },
+    { label: "Videos", href: "#videos" },
+    { label: "Books", href: "#books" },
+    { label: "Press", href: "#press" },
+    { label: "News", href: "/news", external: true },
+    { label: "Speaking", href: "#speaking" },
+    { label: "Contact", href: "#contact" }
+  ];
   return (<>
     <motion.header className={`nav${s ? " s" : ""}`}
       initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
       transition={{ duration: .8, ease: [.22, 1, .36, 1] }}>
       <a className="logo" href="#home">Dr. Kunle <em>Hamilton</em></a>
       <nav className="nav-links">
-        {links.map(l => <a key={l} className="nl" href={`#${l.toLowerCase()}`}>{l}</a>)}
+        {links.map(l =>
+          l.external
+            ? <Link key={l.label} className="nl" to={l.href}>{l.label}</Link>
+            : <a key={l.label} className="nl" href={l.href}>{l.label}</a>
+        )}
         <a className="nav-cta" href="#contact">Invite Dr. Hamilton</a>
       </nav>
       <button className="ham" onClick={() => setOpen(!open)} aria-label="Menu">
@@ -667,7 +711,7 @@ function About() {
     <section className="about" id="about">
       <R x={-20} y={0}>
         <div className="about-photo">
-          <img src={P2} alt="Dr. Kunle Hamilton teaching" />
+          <img src={PHOTO.about} alt="Dr. Kunle Hamilton — Scholar, Author, Prophet" />
           <div className="about-photo-ov" />
           <div className="about-q">
             <div className="about-qt">"If God had not arrested me with the drama of the Celestial Church, He would have lost me to atheism."</div>
@@ -704,7 +748,7 @@ function About() {
         </R>
         <R delay={.35}>
           <div style={{ display:"flex", alignItems:"center", gap:"1rem", padding:"1.2rem 1.4rem", background:"var(--ink2)", border:"1px solid var(--border-d)", marginBottom:"1.5rem" }}>
-            <img src={P4} alt="Dr. Kunle Hamilton" style={{ width:64, height:64, objectFit:"cover", objectPosition:"top", borderRadius:"50%", flexShrink:0, border:"2px solid var(--gold)" }} />
+            <img src={PHOTO.profile} alt="Dr. Kunle Hamilton" style={{ width:64, height:64, objectFit:"cover", objectPosition:"center 30%", borderRadius:"50%", flexShrink:0, border:"2px solid var(--gold)" }} />
             <div>
               <div style={{ fontSize:".72rem", fontWeight:600, color:"var(--white)", marginBottom:".2rem" }}>Prophet (Dr.) Kunle Hamilton</div>
               <div style={{ fontSize:".65rem", fontWeight:300, color:"var(--muted-d)", lineHeight:1.5 }}>Senior Shepherd, CCC PraiseVille Global<br/>President, ShaddaiVille Ministries International</div>
@@ -720,8 +764,8 @@ function About() {
 /* ─── MINISTRIES ─────────────────────────────────────────────────────────── */
 function Ministries() {
   const panels = [
-    { img: P2, tag: "Celestial Church of Christ", name: "CCC PraiseVille", nameEm: "Global", desc: "Mission: Disciple the nations with God in the House. Teaching Villers to succeed in their marriages, ministries, academics and professions in line with God's eternal will. Founded Berlin 2016 — now in Nigeria, UK, USA & Germany.", facts: [{ n: "4+", l: "Countries" }, { n: "2016", l: "Founded" }, { n: "7+", l: "Annual Harvest" }] },
-    { img: P1, tag: "Non-Denominational · Global Training", name: "ShaddaiVille", nameEm: "Ministries Int'l", desc: "\"God's City\" — moulding believers, influencing the world. UK-certified leadership, entrepreneurship & discipleship training since 2007. Free of charge to Christians and Muslims. Visit shaddaiville.org", facts: [{ n: "5", l: "Nations" }, { n: "2007", l: "Founded" }, { n: "UK", l: "Certified" }] }
+    { img: PHOTO.praiseville, tag: "Celestial Church of Christ", name: "CCC PraiseVille", nameEm: "Global", desc: "Mission: Disciple the nations with God in the House. Teaching Villers to succeed in their marriages, ministries, academics and professions in line with God's eternal will. Founded Berlin 2016 — now in Nigeria, UK, USA & Germany.", facts: [{ n: "4+", l: "Countries" }, { n: "2016", l: "Founded" }, { n: "7+", l: "Annual Harvest" }] },
+    { img: PHOTO.shaddaiville, tag: "Non-Denominational · Global Training", name: "ShaddaiVille", nameEm: "Ministries Int'l", desc: "\"God's City\" — moulding believers, influencing the world. UK-certified leadership, entrepreneurship & discipleship training since 2007. Free of charge to Christians and Muslims. Visit shaddaiville.org", facts: [{ n: "5", l: "Nations" }, { n: "2007", l: "Founded" }, { n: "UK", l: "Certified" }] }
   ];
   return (
     <section className="ministries" id="ministries">
@@ -835,6 +879,78 @@ function Videos() {
 
 /* ─── BOOKS ──────────────────────────────────────────────────────────────── */
 function Books() {
+  const { pay, ready: paystackReady } = usePaystack();
+  const [purchaseModal, setPurchaseModal] = useState(null); // { book } when open
+  const [buyer, setBuyer] = useState({ email: "", name: "" });
+  const [paying, setPaying] = useState(false);
+
+  const books = [
+    {
+      tag: "Leadership · Self-Development",
+      title: "Releasing the Eagle in You",
+      p: "Dr. Hamilton's landmark inspirational work on leadership and self-actualization — an eight-chapter guide to unlocking the God-given greatness inside every person. Published by Lambert Academic Publishing across 18 countries in Europe.",
+      pub: "Lambert Academic Publishing",
+      link: "https://www.amazon.com",
+      price: 8500, // NGN
+      currency: "₦"
+    },
+    {
+      tag: "Communication · Church Studies",
+      title: "Journey to Understanding",
+      p: "An academic investigation into how style and content shape audience understanding. Dr. Hamilton uses his own Nigerian church congregation and his Raypower 100.5 FM radio programme as the living laboratory.",
+      pub: "Lambert Academic Publishing · Amazon.com.be",
+      link: "https://www.amazon.com.be",
+      price: 9500,
+      currency: "₦"
+    },
+    {
+      tag: "Politics · Digital Media",
+      title: "New Media and Democracy",
+      p: "Nigeria's President and the Facebook Example. A pioneering study of how former President Goodluck Jonathan used Facebook in his 2011 campaign — one of Africa's first serious analyses of social media and electoral politics.",
+      pub: "Lambert Academic Publishing · Amazon.com",
+      link: "https://www.amazon.com",
+      price: 9500,
+      currency: "₦"
+    },
+    {
+      tag: "Film · Media Studies",
+      title: "Nollywood and the Challenge of Movie Subtitles",
+      p: "Co-authored with Yomi Daramola. A critical assessment of the Nollywood movie industry and the challenge of subtitling for global audiences — bridging Nigeria's film industry with international media scholarship.",
+      pub: "Lambert Academic Publishing · Amazon.com.be",
+      link: "https://www.amazon.com.be",
+      price: 8500,
+      currency: "₦"
+    },
+  ];
+
+  const handleBuy = (book) => {
+    setPurchaseModal({ book });
+    setBuyer({ email: "", name: "" });
+  };
+
+  const confirmPurchase = (e) => {
+    e.preventDefault();
+    if (!buyer.email || !buyer.name) return;
+    const book = purchaseModal.book;
+    setPaying(true);
+    pay({
+      email: buyer.email,
+      amount: book.price,
+      reference: `dkh-${book.title.toLowerCase().replace(/\s+/g, "-").slice(0, 30)}-${Date.now()}`,
+      metadata: {
+        custom_fields: [
+          { display_name: "Book", variable_name: "book_title", value: book.title },
+          { display_name: "Customer Name", variable_name: "customer_name", value: buyer.name },
+        ],
+      },
+      onSuccess: (ref) => {
+        setPaying(false);
+        setPurchaseModal({ book, success: true, ref });
+      },
+      onClose: () => setPaying(false),
+    });
+  };
+
   return (
     <section className="books" id="books">
       <div className="books-hd">
@@ -843,51 +959,118 @@ function Books() {
         <ClipLine text="Cross Borders" className="sh2 dark" delay={.18} italic />
       </div>
       <div className="books-grid">
-        {[
-          {
-            tag: "Leadership · Self-Development",
-            title: "Releasing the Eagle in You",
-            p: "Dr. Hamilton's landmark inspirational work on leadership and self-actualization — an eight-chapter guide to unlocking the God-given greatness inside every person. Published by Lambert Academic Publishing across 18 countries in Europe.",
-            pub: "Lambert Academic Publishing",
-            link: "https://www.amazon.com"
-          },
-          {
-            tag: "Communication · Church Studies",
-            title: "Journey to Understanding",
-            p: "An academic investigation into how style and content shape audience understanding. Dr. Hamilton uses his own Nigerian church congregation and his Raypower 100.5 FM radio programme as the living laboratory.",
-            pub: "Lambert Academic Publishing · Amazon.com.be",
-            link: "https://www.amazon.com.be"
-          },
-          {
-            tag: "Politics · Digital Media",
-            title: "New Media and Democracy",
-            p: "Nigeria's President and the Facebook Example. A pioneering study of how former President Goodluck Jonathan used Facebook in his 2011 campaign — one of Africa's first serious analyses of social media and electoral politics.",
-            pub: "Lambert Academic Publishing · Amazon.com",
-            link: "https://www.amazon.com"
-          },
-          {
-            tag: "Film · Media Studies",
-            title: "Nollywood and the Challenge of Movie Subtitles",
-            p: "Co-authored with Yomi Daramola. A critical assessment of the Nollywood movie industry and the challenge of subtitling for global audiences — bridging Nigeria's film industry with international media scholarship.",
-            pub: "Lambert Academic Publishing · Amazon.com.be",
-            link: "https://www.amazon.com.be"
-          },
-        ].map((b, i) => (
+        {books.map((b, i) => (
           <R key={i} delay={i * .12}>
             <div className="bk">
               <div className="bk-num">0{i + 1}</div>
               <div className="bk-tag">{b.tag}</div>
               <div className="bk-title">{b.title}</div>
               <div className="bk-p">{b.p}</div>
-              <div style={{ fontSize:".6rem", fontWeight:500, color:"var(--muted-l)", letterSpacing:".06em", marginBottom:"1.2rem", lineHeight:1.5 }}>{b.pub}</div>
-              <div style={{ display:"flex", gap:".7rem", flexWrap:"wrap" }}>
-                <a className="bk-cta" href={b.link} target="_blank" rel="noopener noreferrer">View on Amazon →</a>
-                <a className="bk-cta" href="#contact" style={{ background:"transparent", color:"var(--muted-l)", borderBottom:"1px solid var(--border-l)" }}>Request Copy</a>
+              <div style={{ fontSize:".6rem", fontWeight:500, color:"var(--muted-l)", letterSpacing:".06em", marginBottom:"1rem", lineHeight:1.5 }}>{b.pub}</div>
+              <div style={{ display:"flex", alignItems:"baseline", gap:".4rem", marginBottom:"1.2rem" }}>
+                <span style={{ fontFamily:"var(--serif)", fontSize:"1.55rem", fontWeight:300, color:"var(--gold)", letterSpacing:"-.01em" }}>
+                  {b.currency}{b.price.toLocaleString()}
+                </span>
+                <span style={{ fontSize:".55rem", fontWeight:600, color:"var(--muted-l)", letterSpacing:".15em", textTransform:"uppercase" }}>signed copy</span>
+              </div>
+              <div style={{ display:"flex", flexDirection:"column", gap:".55rem" }}>
+                <button
+                  onClick={() => handleBuy(b)}
+                  className="bk-cta"
+                  style={{ background:"var(--gold)", color:"var(--white)", padding:".7rem 1.2rem", border:"none", cursor:"pointer", borderBottom:"none", fontFamily:"var(--sans)", textAlign:"center", justifyContent:"center", borderRadius:"3px" }}
+                  disabled={!paystackReady}
+                >
+                  Buy Now →
+                </button>
+                <a className="bk-cta" href={b.link} target="_blank" rel="noopener noreferrer" style={{ fontSize:".58rem" }}>View on Amazon →</a>
               </div>
             </div>
           </R>
         ))}
       </div>
+
+      {/* Purchase Modal */}
+      <AnimatePresence>
+        {purchaseModal && (
+          <motion.div
+            className="buy-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => !paying && setPurchaseModal(null)}
+          >
+            <motion.div
+              className="buy-modal"
+              initial={{ opacity: 0, y: 20, scale: .96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: .98 }}
+              transition={{ duration: .35, ease: [.22, 1, .36, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {purchaseModal.success ? (
+                <div style={{ textAlign:"center", padding:"1rem 0" }}>
+                  <div style={{ fontFamily:"var(--serif)", fontSize:"3rem", color:"var(--gold)", marginBottom:".5rem", fontStyle:"italic" }}>✓</div>
+                  <div style={{ fontFamily:"var(--serif)", fontSize:"1.8rem", fontWeight:300, fontStyle:"italic", color:"var(--ink)", marginBottom:".6rem" }}>Thank You</div>
+                  <div style={{ fontSize:".9rem", color:"var(--muted-l)", lineHeight:1.6, marginBottom:".5rem" }}>
+                    Your purchase of <strong style={{ color:"var(--ink)" }}>{purchaseModal.book.title}</strong> is confirmed.
+                  </div>
+                  <div style={{ fontSize:".7rem", color:"var(--muted-l)", marginBottom:"1.5rem", fontFamily:"monospace" }}>
+                    Ref: {purchaseModal.ref}
+                  </div>
+                  <button className="bk-cta" style={{ background:"var(--gold)", color:"var(--white)", padding:".8rem 1.6rem", border:"none", cursor:"pointer", borderBottom:"none", borderRadius:"3px" }} onClick={() => setPurchaseModal(null)}>Close</button>
+                </div>
+              ) : (
+                <>
+                  <div style={{ fontSize:".55rem", fontWeight:700, letterSpacing:".22em", textTransform:"uppercase", color:"var(--gold)", marginBottom:".6rem" }}>Order Book</div>
+                  <div style={{ fontFamily:"var(--serif)", fontSize:"1.5rem", fontWeight:300, fontStyle:"italic", color:"var(--ink)", marginBottom:".4rem", lineHeight:1.2 }}>
+                    {purchaseModal.book.title}
+                  </div>
+                  <div style={{ fontSize:".75rem", color:"var(--muted-l)", marginBottom:"1.5rem" }}>
+                    {purchaseModal.book.currency}{purchaseModal.book.price.toLocaleString()} · Signed by Dr. Hamilton · Delivered within Nigeria
+                  </div>
+                  <form onSubmit={confirmPurchase} style={{ display:"flex", flexDirection:"column", gap:".9rem" }}>
+                    <div style={{ display:"flex", flexDirection:"column", gap:".3rem" }}>
+                      <label style={{ fontSize:".55rem", fontWeight:700, letterSpacing:".18em", textTransform:"uppercase", color:"var(--muted-l)" }}>Your Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={buyer.name}
+                        onChange={(e) => setBuyer({ ...buyer, name: e.target.value })}
+                        placeholder="Full name"
+                        style={{ background:"var(--warm2)", border:"1px solid var(--border-l)", padding:".82rem .9rem", fontFamily:"var(--sans)", fontSize:".85rem", outline:"none", borderRadius:"0" }}
+                      />
+                    </div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:".3rem" }}>
+                      <label style={{ fontSize:".55rem", fontWeight:700, letterSpacing:".18em", textTransform:"uppercase", color:"var(--muted-l)" }}>Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        value={buyer.email}
+                        onChange={(e) => setBuyer({ ...buyer, email: e.target.value })}
+                        placeholder="your@email.com"
+                        style={{ background:"var(--warm2)", border:"1px solid var(--border-l)", padding:".82rem .9rem", fontFamily:"var(--sans)", fontSize:".85rem", outline:"none", borderRadius:"0" }}
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={paying || !paystackReady}
+                      style={{ background:"var(--gold)", color:"var(--white)", border:"none", padding:"1rem 1.6rem", fontSize:".68rem", fontWeight:700, letterSpacing:".15em", textTransform:"uppercase", cursor:"pointer", borderRadius:"3px", marginTop:".4rem" }}
+                    >
+                      {paying ? "Processing..." : !paystackReady ? "Loading..." : `Pay ${purchaseModal.book.currency}${purchaseModal.book.price.toLocaleString()} via Paystack`}
+                    </button>
+                    <button type="button" onClick={() => setPurchaseModal(null)} disabled={paying} style={{ background:"transparent", border:"none", color:"var(--muted-l)", fontSize:".7rem", cursor:"pointer", paddingTop:".4rem" }}>
+                      Cancel
+                    </button>
+                    <div style={{ fontSize:".62rem", color:"var(--muted-l)", textAlign:"center", lineHeight:1.5, paddingTop:".6rem", borderTop:"1px solid var(--border-l)" }}>
+                      🔒 Secure payment by <strong style={{ color:"var(--ink)" }}>Paystack</strong> · All Nigerian cards accepted
+                    </div>
+                  </form>
+                </>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -1075,7 +1258,7 @@ function Contact() {
     <section className="contact" id="contact">
       <R x={-20} y={0}>
         <div className="ct-img">
-          <img src={P2} alt="Dr. Kunle Hamilton" />
+          <img src={PHOTO.contact} alt="Dr. Kunle Hamilton" />
           <div className="ct-img-ov" />
           <div className="ct-img-label">
             <div className="ct-img-t">Let's Connect</div>
@@ -1134,35 +1317,65 @@ function Contact() {
   );
 }
 
-/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
-function Footer() {
+
+/* ─── JOURNAL TEASER — latest 3 posts before contact ─────────────────────── */
+function JournalTeaser() {
+  const latest = journalPosts.slice(0, 3);
+  const fmt = (d) =>
+    new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
   return (
-    <footer className="footer">
-      <div className="ft-top">
-        <div className="ft-col">
-          <div className="ft-logo">Dr. Kunle <span>Hamilton</span></div>
-          <div className="ft-tagline">Nigeria's foremost prophet-scholar. Veteran journalist, international author, leadership speaker and founder of twin ministries spanning five nations. The man. The brand. The legacy.</div>
-          <div className="ft-gold" />
+    <section className="journal-teaser" id="journal">
+      <style>{`
+        .journal-teaser { background: var(--warm2); padding: 6rem 7vw; border-top: 1px solid var(--border-l); }
+        .jt-hd { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem; }
+        .jt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        @media(max-width:900px) { .jt-grid { grid-template-columns: 1fr; } }
+        .jt-card { background: var(--warm); border: 1px solid var(--border-l); overflow: hidden; transition: all .35s; cursor: pointer; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+        .jt-card:hover { transform: translateY(-3px); box-shadow: 0 18px 50px -20px rgba(9,21,42,.18); border-color: var(--gold); }
+        .jt-img { aspect-ratio: 16/10; overflow: hidden; }
+        .jt-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform .6s; }
+        .jt-card:hover .jt-img img { transform: scale(1.05); }
+        .jt-body { padding: 1.6rem 1.7rem; display: flex; flex-direction: column; flex: 1; }
+        .jt-meta { display: flex; gap: .7rem; align-items: center; margin-bottom: .7rem; }
+        .jt-cat { font-size: .52rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+        .jt-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border-l); }
+        .jt-date { font-size: .65rem; color: var(--muted-l); }
+        .jt-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 300; line-height: 1.25; color: var(--ink); margin-bottom: .7rem; font-style: italic; }
+        .jt-excerpt { font-size: .78rem; font-weight: 300; line-height: 1.65; color: var(--muted-l); flex: 1; }
+        .jt-readmore { display: inline-flex; align-items: center; gap: .4rem; font-size: .6rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--ink); margin-top: 1.2rem; transition: gap .25s, color .25s; }
+        .jt-card:hover .jt-readmore { color: var(--gold); gap: .7rem; }
+      `}</style>
+      <div className="jt-hd">
+        <div>
+          <R><div className="stag dark">From the Journal</div></R>
+          <ClipLine text="Read His" className="sh2 dark" delay={.1} />
+          <ClipLine text="Latest Writings" className="sh2 dark" delay={.18} italic />
         </div>
-        <div className="ft-col">
-          <div className="ft-ch">Main Site</div>
-          {[["About", "#about"], ["His Books", "#books"], ["Speaking", "#speaking"], ["Videos", "#videos"], ["Contact", "#contact"]].map(([l, h]) => <a key={l} className="ftl" href={h}>{l}</a>)}
-        </div>
-        <div className="ft-col">
-          <div className="ft-ch">Media & Press</div>
-          {[["Book as Speaker", "#speaking"], ["Request Interview", "#contact"], ["Speaking Topics", "#speaking"], ["Press Biography", "#about"], ["CCC PraiseVille YouTube", "https://www.youtube.com/@cccpraiseville"]].map(([l, h]) => <a key={l} className="ftl" href={h} target={h.startsWith("http") ? "_blank" : undefined} rel={h.startsWith("http") ? "noopener noreferrer" : undefined}>{l}</a>)}
-        </div>
-        <div className="ft-col">
-          <div className="ft-ch">Ministries</div>
-          {[["CCC PraiseVille Global", "#ministries"], ["ShaddaiVille Int'l", "#ministries"], ["Festival of the Word", "#videos"], ["Leadership Academy", "#ministries"], ["Outreach & Missions", "#ministries"]].map(([l, h]) => <a key={l} className="ftl" href={h}>{l}</a>)}
-          <a className="ftl" href="https://www.shaddaiville.org" target="_blank" rel="noopener noreferrer" style={{ color:"#93C5FD" }}>→ shaddaiville.org</a>
-        </div>
+        <R delay={.2}>
+          <Link to="/news" className="b-gold" style={{ display: "inline-flex" }}>All Articles →</Link>
+        </R>
       </div>
-      <div className="ft-bottom">
-        <div className="ft-copy">© 2026 Dr. Kunle Hamilton · All Rights Reserved</div>
-        <div className="ft-copy">kunlehamilton.com · The Official Personal Website</div>
+      <div className="jt-grid">
+        {latest.map((p, i) => (
+          <R key={p.slug} delay={i * .1}>
+            <Link to={`/news/${p.slug}`} className="jt-card">
+              <div className="jt-img"><img src={p.image} alt={p.title} loading="lazy" /></div>
+              <div className="jt-body">
+                <div className="jt-meta">
+                  <span className="jt-cat">{p.category}</span>
+                  <span className="jt-dot" />
+                  <span className="jt-date">{fmt(p.date)}</span>
+                </div>
+                <h3 className="jt-title">{p.title}</h3>
+                <p className="jt-excerpt">{p.excerpt}</p>
+                <span className="jt-readmore">Read article →</span>
+              </div>
+            </Link>
+          </R>
+        ))}
       </div>
-    </footer>
+    </section>
   );
 }
 
@@ -1181,7 +1394,8 @@ export default function App() {
     <Books />
     <Press />
     <Speaking />
+    <JournalTeaser />
     <Contact />
-    <Footer />
+    <SharedFooter />
   </>);
 }
