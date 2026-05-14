@@ -32,8 +32,13 @@ export default function Nav() {
         .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gutter); background: rgba(255,255,255,0.96); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid transparent; transition: box-shadow 0.3s, border-color 0.3s; }
         .nav.scrolled { box-shadow: 0 2px 20px rgba(9,21,42,0.06); border-bottom-color: rgba(9,21,42,0.06); }
 
-        .nav-brand { font-family: var(--serif); font-size: 1.02rem; font-weight: 500; color: var(--ink); letter-spacing: -0.005em; white-space: nowrap; }
-        .nav-brand em { font-style: italic; font-weight: 400; color: var(--gold); }
+        .nav-brand { display: flex; align-items: center; gap: 0.8rem; color: var(--ink); letter-spacing: -0.005em; white-space: nowrap; transition: opacity 0.2s; }
+        .nav-brand:hover { opacity: 0.8; }
+        .nav-brand-logo { width: 38px; height: 38px; flex-shrink: 0; object-fit: contain; transition: transform 0.4s var(--ease-out); }
+        .nav-brand:hover .nav-brand-logo { transform: rotate(-8deg) scale(1.05); }
+        .nav-brand-text { font-family: var(--serif); font-size: 1.02rem; font-weight: 500; line-height: 1; }
+        .nav-brand-text em { font-style: italic; font-weight: 400; color: var(--gold); }
+        @media (max-width: 480px) { .nav-brand-text { display: none; } }
 
         .nav-center { display: flex; align-items: center; gap: 2.2rem; }
         @media (max-width: 1000px) { .nav-center { display: none; } }
@@ -70,8 +75,9 @@ export default function Nav() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        <Link to="/" className="nav-brand">
-          Dr. Kunle <em>Hamilton</em>
+        <Link to="/" className="nav-brand" aria-label="Dr. Kunle Hamilton — Home">
+          <img src="/kh-logo-nav.png" alt="KH" className="nav-brand-logo" width="38" height="38" />
+          <span className="nav-brand-text">Dr. Kunle <em>Hamilton</em></span>
         </Link>
 
         <nav className="nav-center">

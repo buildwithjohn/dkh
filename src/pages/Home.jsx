@@ -42,6 +42,12 @@ export default function Home() {
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
         @media (max-width: 768px) { .hm-scroll-cue { display: none; } }
 
+        /* Floating brand accent — top-right of hero */
+        .hm-hero-mark { position: absolute; top: 110px; right: var(--gutter); width: 70px; height: 70px; z-index: 4; opacity: 0; animation: fadeMark 1.2s 0.8s var(--ease-out) forwards; }
+        .hm-hero-mark img { width: 100%; height: 100%; filter: drop-shadow(0 4px 20px rgba(220,38,38,0.3)); }
+        @keyframes fadeMark { from { opacity: 0; transform: scale(0.7) rotate(-20deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+        @media (max-width: 768px) { .hm-hero-mark { width: 54px; height: 54px; top: 90px; } }
+
         /* ── Marquee ── */
         .hm-marquee { background: var(--gold); padding: 1.2rem 0; overflow: hidden; }
         .hm-marquee-track { display: flex; gap: 4rem; animation: marquee 40s linear infinite; white-space: nowrap; }
@@ -116,6 +122,11 @@ export default function Home() {
       <section className="hm-hero">
         <img src="/hero.jpg" alt="Dr. Kunle Hamilton" fetchpriority="high" />
         <div className="hm-hero-ov" />
+
+        {/* Brand mark accent */}
+        <div className="hm-hero-mark" aria-hidden="true">
+          <img src="/kh-logo-transparent.png" alt="" />
+        </div>
 
         <motion.div
           className="hm-hero-body"

@@ -28,7 +28,9 @@ export default function Footer() {
         @media (max-width: 1000px) { .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; } }
         @media (max-width: 600px) { .footer-top { grid-template-columns: 1fr; gap: 2.5rem; } }
 
-        .footer-brand { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; margin-bottom: 0.6rem; line-height: 1; letter-spacing: -0.01em; }
+        .footer-brand-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .footer-brand-logo { width: 52px; height: 52px; flex-shrink: 0; }
+        .footer-brand { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; line-height: 1; letter-spacing: -0.01em; }
         .footer-brand em { font-style: italic; color: var(--gold3); }
         .footer-tag { font-size: 0.85rem; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.62); margin-bottom: 1.8rem; max-width: 380px; }
 
@@ -67,7 +69,10 @@ export default function Footer() {
           <div className="footer-top">
             {/* Brand + subscribe */}
             <div>
-              <h3 className="footer-brand">Dr. Kunle <em>Hamilton</em></h3>
+              <div className="footer-brand-row">
+                <img src="/kh-logo-nav.png" alt="KH" className="footer-brand-logo" width="52" height="52" />
+                <h3 className="footer-brand">Dr. Kunle <em>Hamilton</em></h3>
+              </div>
               <p className="footer-tag">
                 Nigeria's foremost prophet-scholar. Subscribe for new books, sermons,
                 press features and ministry updates — delivered to your inbox.

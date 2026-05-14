@@ -1,0 +1,15 @@
+{
+  "name": "Dr. Kunle Hamilton",
+  "short_name": "Hamilton",
+  "description": "Dr. Kunle Hamilton — Prophet, Scholar, Author, Shepherd. Founder of CCC PraiseVille Global and ShaddaiVille Ministries International.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#09152A",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/kh-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
