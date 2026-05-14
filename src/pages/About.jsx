@@ -101,7 +101,7 @@ export default function About() {
             </h2>
 
             <p className="lead">
-              "I never imagined a Best Student in Philosophy at the University of Lagos
+              "I never imagined the Best Philosophy Graduate of UNILAG '85
               would one day stand before nations as a prophet of God. But that is the
               story God has written with my life."
             </p>
@@ -111,7 +111,7 @@ export default function About() {
             </p>
 
             <p>
-              He emerged from the <strong>University of Lagos as a First Class graduate in Philosophy (1985)</strong>, the Best Student of his class. He went on to a Master's in Mass Communication from the same university. Few people fuse rigorous academic thought with prophetic grace the way he does.
+              He emerged from the <strong>University of Lagos as the Best Philosophy Graduate of 1985</strong>, the top student of his class. He went on to a Master's in Mass Communication from the same university. Few people fuse rigorous academic thought with prophetic grace the way he does.
             </p>
 
             <p>
@@ -176,8 +176,8 @@ export default function About() {
           <Reveal delay={0.1}>
             <div className="ab-edu-card">
               <div className="ab-edu-year">1985</div>
-              <div className="ab-edu-degree">BA Philosophy — Best Student</div>
-              <div className="ab-edu-school">University of Lagos · First Class Honours</div>
+              <div className="ab-edu-degree">BA Philosophy</div>
+              <div className="ab-edu-school">Best Philosophy Graduate · University of Lagos</div>
             </div>
           </Reveal>
           <Reveal delay={0.2}>

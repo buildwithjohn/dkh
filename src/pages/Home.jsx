@@ -374,7 +374,7 @@ export default function Home() {
             { icon: "bi-clock-history", n: 40, suffix: "+", l: "Years of Ministry & Media" },
             { icon: "bi-globe-europe-africa", n: 18, l: "Countries — Books Published" },
             { icon: "bi-flag-fill", n: 5, l: "Nations of Impact" },
-            { icon: "bi-mortarboard-fill", n: 1985, l: "First Class · UNILAG" },
+            { icon: "bi-mortarboard-fill", n: 1985, l: "Best Philosophy Graduate · UNILAG" },
           ].map((s, i) => (
             <Reveal key={i} delay={i * 0.08}>
               <div className="hm-stat">

@@ -58,7 +58,7 @@ const FEATURES = [
 ];
 
 const TIMELINE = [
-  { yr: "1985", role: "BA Philosophy", detail: "Best Student, University of Lagos" },
+  { yr: "1985", role: "BA Philosophy", detail: "Best Philosophy Graduate, University of Lagos" },
   { yr: "1989", role: "Media Career Begins", detail: "Newspaper Editor, PR & Advertising Consultant" },
   { yr: "1990", role: "M.Sc Mass Comm", detail: "University of Lagos" },
   { yr: "~00s", role: "Vanguard & ThisDAY", detail: "Editor · pioneered The Glitterati column" },
