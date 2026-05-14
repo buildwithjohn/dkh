@@ -3,25 +3,31 @@ import { motion } from "framer-motion";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import {
+  IconMic, IconNewspaper, IconBook, IconChurch, IconGraduation, IconBriefcase,
+  BlobAccent, DotPattern, ScribbleUnderline, QuoteMark
+} from "../components/Illustrations";
 
 export default function About() {
   const roles = [
-    { icon: "bi-newspaper", title: "Newspaper Editor & PR Veteran", detail: "35+ years in Nigerian media, advertising & reputation management. Editor at Vanguard and ThisDAY. Pioneer of The Glitterati Sunday pull-out." },
-    { icon: "bi-book", title: "International Author", detail: "Four titles published by Lambert Academic Publishing across 18 European countries — leadership, communication, politics, film studies." },
-    { icon: "bi-person-arms-up", title: "Senior Shepherd", detail: "CCC PraiseVille Global — founded in Berlin (May 8, 2016). Now in Nigeria, Germany, UK and USA." },
-    { icon: "bi-mortarboard", title: "Founder & President", detail: "ShaddaiVille Ministries International — UK-certified leadership academy, free of charge, since 2007." },
-    { icon: "bi-mic-fill", title: "Radio Host & Public Speaker", detail: "Raypower 100.5 FM host. Keynote speaker at churches, universities, corporates and conferences across five nations." },
-    { icon: "bi-briefcase", title: "CEO", detail: "Virgin Outdoor — Reputation & Brand Management consultancy, Lagos." },
+    { Icon: IconNewspaper, title: "Newspaper Editor & PR Veteran", detail: "35+ years in Nigerian media, advertising & reputation management. Editor at Vanguard and ThisDAY. Pioneer of The Glitterati Sunday pull-out." },
+    { Icon: IconBook, title: "International Author", detail: "Four titles published by Lambert Academic Publishing across 18 European countries — leadership, communication, politics, film studies." },
+    { Icon: IconChurch, title: "Senior Shepherd", detail: "CCC PraiseVille Global — founded in Berlin (May 8, 2016). Now in Nigeria, Germany, UK and USA." },
+    { Icon: IconGraduation, title: "Founder & President", detail: "ShaddaiVille Ministries International — UK-certified leadership academy, free of charge, since 2007." },
+    { Icon: IconMic, title: "Radio Host & Public Speaker", detail: "Raypower 100.5 FM host. Keynote speaker at churches, universities, corporates and conferences across five nations." },
+    { Icon: IconBriefcase, title: "CEO", detail: "Virgin Outdoor — Lagos-based reputation and brand management consultancy." },
   ];
 
   return (
     <Layout title="About" description="The full story of Dr. Kunle Hamilton — prophet, scholar, journalist, author, speaker.">
       <style>{`
-        .ab-quote { padding: 5rem var(--gutter); background: var(--warm); border-bottom: 1px solid var(--border-l); }
-        .ab-quote-inner { max-width: 900px; margin: 0 auto; }
-        .ab-quote-mark { font-family: var(--serif); font-size: 5rem; font-style: italic; line-height: 1; color: var(--gold); margin-bottom: 1rem; }
+        .ab-quote { padding: 5rem var(--gutter); background: var(--warm); border-bottom: 1px solid var(--border-l); position: relative; overflow: hidden; }
+        .ab-quote-blob { position: absolute; top: -100px; right: -150px; width: 400px; height: 400px; opacity: 0.5; pointer-events: none; }
+        .ab-quote-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+        .ab-quote-mark { width: 64px; height: 56px; color: var(--gold); margin-bottom: 1rem; opacity: 0.6; }
         .ab-quote-text { font-family: var(--serif); font-size: clamp(1.4rem, 2.6vw, 2.1rem); font-weight: 300; font-style: italic; line-height: 1.4; color: var(--ink); margin-bottom: 1.4rem; }
-        .ab-quote-by { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); }
+        .ab-quote-by { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); display: inline-flex; align-items: center; gap: 0.6rem; }
+        .ab-quote-by::before { content: ''; width: 32px; height: 1.5px; background: var(--gold); }
 
         .ab-story { padding: 6rem var(--gutter); background: var(--warm); display: grid; grid-template-columns: 420px 1fr; gap: 5rem; align-items: start; }
         @media (max-width: 1000px) { .ab-story { grid-template-columns: 1fr; gap: 3rem; } }
@@ -53,7 +59,9 @@ export default function About() {
         .ab-role:hover { background: rgba(255,255,255,0.06); border-color: var(--gold); transform: translateX(4px); }
 
         .ab-role-hd { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
-        .ab-role-icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 4px; font-size: 1.2rem; flex-shrink: 0; }
+        .ab-role-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 8px; flex-shrink: 0; transition: transform 0.3s; }
+        .ab-role-icon svg { width: 24px; height: 24px; }
+        .ab-role:hover .ab-role-icon { transform: rotate(-8deg) scale(1.08); }
         .ab-role-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 500; color: var(--white); font-style: italic; }
         .ab-role-detail { font-size: 0.88rem; font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.65); }
 
@@ -145,7 +153,7 @@ export default function About() {
             <Reveal key={r.title} delay={i * 0.08}>
               <div className="ab-role">
                 <div className="ab-role-hd">
-                  <div className="ab-role-icon"><i className={`bi ${r.icon}`} /></div>
+                  <div className="ab-role-icon"><r.Icon /></div>
                   <h3 className="ab-role-title">{r.title}</h3>
                 </div>
                 <p className="ab-role-detail">{r.detail}</p>

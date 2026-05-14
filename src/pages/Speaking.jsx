@@ -2,6 +2,11 @@ import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import MagneticWrap from "../components/MagneticWrap";
+import {
+  IconMic, IconChurch, IconBook, IconGraduation, IconBriefcase,
+  BlobAccent, DotPattern, ScribbleUnderline, QuoteMark, Sparkles
+} from "../components/Illustrations";
 
 const EVENTS = [
   { d: "07", m: "Sep", yr: "2025", name: "Festival of the Word 8.0 — Annual Harvest", loc: "Yaba, Lagos", type: "Church · Keynote", icon: "bi-stars" },
@@ -12,12 +17,12 @@ const EVENTS = [
 ];
 
 const TOPICS = [
-  { icon: "bi-stars", title: "Keynotes", desc: "Headline speaking slots for major conferences, conventions and summits." },
-  { icon: "bi-church", title: "Church Revivals", desc: "Multi-day teaching engagements with depth — for congregations of any tradition." },
-  { icon: "bi-people-fill", title: "Leadership Conferences", desc: "Pastoral and corporate leadership training drawn from four decades of practice." },
-  { icon: "bi-mortarboard", title: "University Lectures", desc: "Media studies, philosophy of communication, faith and intellect." },
-  { icon: "bi-mic-fill", title: "Media Appearances", desc: "TV, radio and podcast interviews on doctrine, society, leadership." },
-  { icon: "bi-briefcase-fill", title: "Corporate Devotionals", desc: "Monday-morning devotionals for Christian-led companies and boardrooms." },
+  { Icon: IconMic, title: "Keynotes", desc: "Headline speaking slots for major conferences, conventions and summits." },
+  { Icon: IconChurch, title: "Church Revivals", desc: "Multi-day teaching engagements with depth — for congregations of any tradition." },
+  { Icon: IconGraduation, title: "Leadership Conferences", desc: "Pastoral and corporate leadership training drawn from four decades of practice." },
+  { Icon: IconBook, title: "University Lectures", desc: "Media studies, philosophy of communication, faith and intellect." },
+  { Icon: IconMic, title: "Media Appearances", desc: "TV, radio and podcast interviews on doctrine, society, leadership." },
+  { Icon: IconBriefcase, title: "Corporate Devotionals", desc: "Monday-morning devotionals for Christian-led companies and boardrooms." },
 ];
 
 export default function Speaking() {
@@ -39,7 +44,8 @@ export default function Speaking() {
         .sp-pitch-title strong { font-weight: 700; }
         .sp-pitch-lead { font-size: 1.05rem; font-weight: 300; line-height: 1.75; color: var(--muted-l); margin-bottom: 1.6rem; }
         .sp-pitch-lead strong { color: var(--ink); font-weight: 600; }
-        .sp-pitch-quote { border-left: 3px solid var(--gold); padding-left: 1.4rem; margin-bottom: 2rem; }
+        .sp-pitch-quote { position: relative; padding: 1.5rem 1.5rem 1.5rem 4rem; margin-bottom: 2rem; background: var(--warm2); border-radius: 8px; border-left: 4px solid var(--gold); }
+        .sp-pitch-quote-mark { position: absolute; top: 0.5rem; left: 1rem; width: 36px; height: 32px; color: var(--gold); opacity: 0.4; }
         .sp-pitch-quote-text { font-family: var(--serif); font-size: 1.15rem; font-style: italic; font-weight: 300; line-height: 1.55; color: var(--ink); margin-bottom: 0.6rem; }
         .sp-pitch-quote-by { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
 
@@ -55,7 +61,9 @@ export default function Speaking() {
         @media (max-width: 600px) { .sp-topics-grid { grid-template-columns: 1fr; } }
         .sp-topic { padding: 1.8rem 1.6rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-d); border-radius: 4px; transition: all 0.3s var(--ease-out); }
         .sp-topic:hover { background: rgba(255,255,255,0.06); border-color: var(--gold); transform: translateY(-2px); }
-        .sp-topic-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 4px; font-size: 1.1rem; margin-bottom: 1rem; }
+        .sp-topic-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 8px; margin-bottom: 1rem; transition: transform 0.3s; }
+        .sp-topic-icon svg { width: 24px; height: 24px; }
+        .sp-topic:hover .sp-topic-icon { transform: rotate(-8deg) scale(1.05); }
         .sp-topic-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 500; font-style: italic; color: var(--white); margin-bottom: 0.5rem; }
         .sp-topic-desc { font-size: 0.82rem; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,0.6); }
 
@@ -114,6 +122,7 @@ export default function Speaking() {
               Dr. Hamilton has spoken at <strong>churches, conferences, corporates, universities, leadership summits and media platforms</strong> across Nigeria, Germany, the UK and the USA. He brings the rare gift of a working journalist's clarity, a philosopher's depth and a prophet's authority — all in one voice.
             </p>
             <div className="sp-pitch-quote">
+              <QuoteMark className="sp-pitch-quote-mark" />
               <p className="sp-pitch-quote-text">
                 "The responsibility of leaders is to guide young people toward righteousness — not to encourage them to chase fame through questionable means."
               </p>
@@ -137,7 +146,7 @@ export default function Speaking() {
           {TOPICS.map((t, i) => (
             <Reveal key={t.title} delay={i * 0.06}>
               <div className="sp-topic">
-                <div className="sp-topic-icon"><i className={`bi ${t.icon}`} /></div>
+                <div className="sp-topic-icon"><t.Icon /></div>
                 <h3 className="sp-topic-title">{t.title}</h3>
                 <p className="sp-topic-desc">{t.desc}</p>
               </div>

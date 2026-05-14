@@ -63,6 +63,26 @@ export default function PageHero({
           </div>
         )}
         <div className="ph-glow" />
+        {/* Decorative dot pattern accent */}
+        <svg
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            bottom: "-20px",
+            right: "-20px",
+            width: "200px",
+            height: "200px",
+            opacity: variant === "dark" ? 0.15 : 0.10,
+            pointerEvents: "none",
+          }}
+        >
+          <defs>
+            <pattern id="ph-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill={variant === "dark" ? "#93C5FD" : "#2563EB"} />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#ph-dots)" />
+        </svg>
         <div className="ph-inner">
           {eyebrow && (
             <motion.div

@@ -3,6 +3,18 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "../components/Layout";
 import Reveal from "../components/Reveal";
+import {
+  IllustrationProphet,
+  IllustrationAuthor,
+  IllustrationJournalist,
+  BlobAccent,
+  GridPattern,
+  DotPattern,
+  Sparkles,
+  ScribbleUnderline,
+} from "../components/Illustrations";
+import AnimatedNumber from "../components/AnimatedNumber";
+import MagneticWrap from "../components/MagneticWrap";
 import { posts as journalPosts } from "../data/posts";
 
 export default function Home() {
@@ -56,64 +68,130 @@ export default function Home() {
         .hm-marquee-dot { color: rgba(255,255,255,0.55); align-self: center; }
 
         /* ── Pillars section ── */
-        .hm-pillars { padding: 6rem var(--gutter); background: var(--warm); }
-        .hm-pillars-hd { text-align: center; max-width: 720px; margin: 0 auto 4rem; }
+        .hm-pillars { padding: 7rem var(--gutter); background: var(--warm); position: relative; overflow: hidden; }
+        .hm-pillars-bg { position: absolute; inset: 0; pointer-events: none; opacity: 0.4; }
+        .hm-pillars-bg svg { width: 100%; height: 100%; }
+        .hm-pillars-blob1 { position: absolute; top: -120px; right: -180px; width: 500px; height: 500px; pointer-events: none; }
+        .hm-pillars-blob2 { position: absolute; bottom: -100px; left: -200px; width: 450px; height: 450px; pointer-events: none; }
+
+        .hm-pillars-hd { text-align: center; max-width: 760px; margin: 0 auto 5rem; position: relative; z-index: 2; }
         .hm-pillars-eyebrow { display: inline-flex; align-items: center; justify-content: center; gap: 0.8rem; font-size: var(--t-eyebrow); font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.4rem; }
         .hm-pillars-eyebrow::before, .hm-pillars-eyebrow::after { content: ''; width: 28px; height: 1.5px; background: var(--gold); }
-        .hm-pillars-title { font-family: var(--serif); font-size: var(--t-h2); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
+        .hm-pillars-title { font-family: var(--serif); font-size: var(--t-h2); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.6rem; position: relative; display: inline-block; }
         .hm-pillars-title em { font-style: italic; color: var(--gold); }
-        .hm-pillars-lead { font-size: var(--t-body); font-weight: 300; line-height: 1.7; color: var(--muted-l); }
+        .hm-pillars-title-underline { display: block; width: 200px; height: 12px; margin: 0.6rem auto 0; color: var(--gold); }
+        .hm-pillars-lead { font-size: var(--t-body); font-weight: 300; line-height: 1.7; color: var(--muted-l); margin-top: 1rem; }
 
-        .hm-pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-        @media (max-width: 900px) { .hm-pillars-grid { grid-template-columns: 1fr; gap: 1rem; } }
+        .hm-pillars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; position: relative; z-index: 2; }
+        @media (max-width: 900px) { .hm-pillars-grid { grid-template-columns: 1fr; gap: 1.2rem; } }
 
-        .hm-pillar { padding: 2.5rem 2rem; background: var(--warm2); border: 1px solid var(--border-l); border-radius: 4px; transition: all 0.35s var(--ease-out); position: relative; overflow: hidden; }
-        .hm-pillar::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 2px; background: var(--gold); transition: width 0.5s; }
-        .hm-pillar:hover::before { width: 100%; }
-        .hm-pillar:hover { background: var(--warm); border-color: var(--gold); transform: translateY(-3px); box-shadow: var(--shadow-2); }
-        .hm-pillar-icon { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 4px; font-size: 1.4rem; margin-bottom: 1.4rem; }
-        .hm-pillar-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; line-height: 1.2; margin-bottom: 0.7rem; color: var(--ink); }
-        .hm-pillar-title em { font-style: italic; color: var(--gold); }
-        .hm-pillar-desc { font-size: 0.88rem; font-weight: 300; line-height: 1.65; color: var(--muted-l); margin-bottom: 1.4rem; }
-        .hm-pillar-link { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink); transition: gap 0.25s, color 0.25s; }
-        .hm-pillar-link:hover { gap: 0.9rem; color: var(--gold); }
+        .hm-pillar {
+          padding: 0; background: var(--warm); border: 1px solid var(--border-l); border-radius: 8px;
+          transition: all 0.4s var(--ease-out); position: relative; overflow: hidden;
+          display: flex; flex-direction: column;
+        }
+        .hm-pillar::before {
+          content: ''; position: absolute; inset: 0;
+          background: linear-gradient(135deg, rgba(37,99,235,0.04) 0%, transparent 60%);
+          opacity: 0; transition: opacity 0.4s;
+        }
+        .hm-pillar:hover::before { opacity: 1; }
+        .hm-pillar:hover {
+          border-color: var(--gold);
+          transform: translateY(-6px);
+          box-shadow: 0 30px 60px -20px rgba(37,99,235,0.20);
+        }
+
+        .hm-pillar-illo {
+          width: 100%; aspect-ratio: 5/4; background: linear-gradient(135deg, var(--warm2) 0%, var(--warm3) 100%);
+          display: flex; align-items: center; justify-content: center;
+          border-radius: 8px 8px 0 0; overflow: hidden; position: relative;
+        }
+        .hm-pillar-illo::after {
+          content: ''; position: absolute; inset: 0;
+          background: radial-gradient(circle at 70% 30%, rgba(37,99,235,0.08), transparent 60%);
+        }
+        .hm-pillar-illo svg { width: 78%; height: auto; position: relative; z-index: 2; transition: transform 0.5s var(--ease-out); }
+        .hm-pillar:hover .hm-pillar-illo svg { transform: scale(1.06) rotate(-1deg); }
+
+        .hm-pillar-content { padding: 2rem 2rem 2.2rem; display: flex; flex-direction: column; flex: 1; position: relative; z-index: 2; }
+
+        .hm-pillar-num {
+          position: absolute; top: -20px; right: 1.5rem;
+          width: 40px; height: 40px; border-radius: 50%;
+          background: var(--gold); color: var(--white);
+          display: flex; align-items: center; justify-content: center;
+          font-family: var(--serif); font-size: 1rem; font-weight: 500; font-style: italic;
+          box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+        }
+
+        .hm-pillar-title { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; line-height: 1.15; margin-bottom: 0.9rem; color: var(--ink); }
+        .hm-pillar-title em { font-style: italic; color: var(--gold); font-weight: 500; }
+        .hm-pillar-desc { font-size: 0.92rem; font-weight: 300; line-height: 1.7; color: var(--muted-l); margin-bottom: 1.6rem; flex: 1; }
+        .hm-pillar-link {
+          display: inline-flex; align-items: center; gap: 0.5rem;
+          font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+          color: var(--ink); padding-top: 1rem; border-top: 1px solid var(--border-l);
+          transition: gap 0.25s, color 0.25s;
+        }
+        .hm-pillar:hover .hm-pillar-link { gap: 0.9rem; color: var(--gold); }
+        .hm-pillar-link i { font-size: 0.9rem; }
 
         /* ── Stats ── */
-        .hm-stats { padding: 5rem var(--gutter); background: var(--ink); color: var(--white); border-top: 1px solid var(--border-d); border-bottom: 1px solid var(--border-d); display: grid; grid-template-columns: repeat(4, 1fr); }
-        @media (max-width: 900px) { .hm-stats { grid-template-columns: repeat(2, 1fr); gap: 2rem; } }
-        @media (max-width: 480px) { .hm-stats { grid-template-columns: 1fr; padding: 4rem var(--gutter); } }
-        .hm-stat { padding: 0.5rem 1rem; text-align: center; border-right: 1px solid var(--border-d); }
+        .hm-stats { padding: 6rem var(--gutter); background: var(--ink); color: var(--white); border-top: 1px solid var(--border-d); border-bottom: 1px solid var(--border-d); position: relative; overflow: hidden; }
+        .hm-stats-bg { position: absolute; inset: 0; opacity: 0.3; color: var(--gold3); }
+        .hm-stats-glow { position: absolute; top: -50%; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 60%); pointer-events: none; }
+        .hm-stats-inner { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+        @media (max-width: 900px) { .hm-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 2.5rem; } }
+        @media (max-width: 480px) { .hm-stats-inner { grid-template-columns: 1fr; } }
+
+        .hm-stat { padding: 0.5rem 1rem; text-align: center; border-right: 1px solid var(--border-d); position: relative; transition: transform 0.3s; }
+        .hm-stat:hover { transform: translateY(-3px); }
         .hm-stat:last-child { border-right: none; }
         @media (max-width: 900px) { .hm-stat { border-right: none; } }
-        .hm-stat-n { font-family: var(--serif); font-size: clamp(3rem, 5vw, 4.5rem); font-weight: 300; color: var(--gold3); line-height: 1; }
-        .hm-stat-l { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.7rem; }
+        .hm-stat-icon { width: 44px; height: 44px; margin: 0 auto 1rem; border: 1px solid var(--gold3); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--gold3); font-size: 1.1rem; transition: all 0.3s; }
+        .hm-stat:hover .hm-stat-icon { background: var(--gold); border-color: var(--gold); color: var(--white); transform: scale(1.05) rotate(8deg); }
+        .hm-stat-n { font-family: var(--serif); font-size: clamp(3.2rem, 5.5vw, 5rem); font-weight: 300; color: var(--gold3); line-height: 1; letter-spacing: -0.02em; }
+        .hm-stat-n em { font-style: italic; font-size: 0.6em; }
+        .hm-stat-l { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 0.9rem; line-height: 1.5; }
 
         /* ── Latest from Journal ── */
-        .hm-journal { padding: 6rem var(--gutter); background: var(--warm); }
-        .hm-journal-hd { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; }
+        .hm-journal { padding: 7rem var(--gutter); background: var(--warm2); position: relative; overflow: hidden; }
+        .hm-journal-blob { position: absolute; top: 50%; right: -200px; width: 500px; height: 500px; transform: translateY(-50%); pointer-events: none; }
+        .hm-journal-hd { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3rem; position: relative; z-index: 2; }
         .hm-journal-title { font-family: var(--serif); font-size: var(--t-h2); font-weight: 300; line-height: 1.05; }
         .hm-journal-title em { font-style: italic; color: var(--gold); }
-        .hm-journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+        .hm-journal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; position: relative; z-index: 2; }
         @media (max-width: 900px) { .hm-journal-grid { grid-template-columns: 1fr; } }
-        .hm-post { display: block; background: var(--warm); border: 1px solid var(--border-l); border-radius: 4px; overflow: hidden; transition: all 0.35s var(--ease-out); }
-        .hm-post:hover { transform: translateY(-3px); border-color: var(--gold); box-shadow: var(--shadow-2); }
-        .hm-post-img { aspect-ratio: 16/10; overflow: hidden; }
-        .hm-post-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform 0.6s; }
-        .hm-post:hover .hm-post-img img { transform: scale(1.04); }
-        .hm-post-body { padding: 1.5rem 1.7rem; }
-        .hm-post-meta { display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.7rem; }
-        .hm-post-cat { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+        .hm-post { display: block; background: var(--warm); border: 1px solid var(--border-l); border-radius: 8px; overflow: hidden; transition: all 0.4s var(--ease-out); }
+        .hm-post:hover { transform: translateY(-4px); border-color: var(--gold); box-shadow: 0 20px 40px -15px rgba(37,99,235,0.20); }
+        .hm-post-img { aspect-ratio: 16/10; overflow: hidden; position: relative; }
+        .hm-post-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform 0.7s var(--ease-out); }
+        .hm-post-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(9,21,42,0.2), transparent 50%); opacity: 0; transition: opacity 0.4s; }
+        .hm-post:hover .hm-post-img img { transform: scale(1.06); }
+        .hm-post:hover .hm-post-img::after { opacity: 1; }
+        .hm-post-body { padding: 1.7rem 1.8rem; }
+        .hm-post-meta { display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.8rem; }
+        .hm-post-cat { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); }
+        .hm-post-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border-l); }
         .hm-post-date { font-size: 0.7rem; color: var(--muted-l); }
-        .hm-post-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 400; font-style: italic; line-height: 1.25; color: var(--ink); }
+        .hm-post-title { font-family: var(--serif); font-size: 1.25rem; font-weight: 400; font-style: italic; line-height: 1.3; color: var(--ink); margin-bottom: 0.8rem; }
+        .hm-post-read { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); padding-top: 1rem; border-top: 1px solid var(--border-l); transition: color 0.25s, gap 0.25s; }
+        .hm-post:hover .hm-post-read { color: var(--gold); gap: 0.7rem; }
 
         /* ── Final CTA strip ── */
-        .hm-cta { padding: 6rem var(--gutter); background: linear-gradient(135deg, var(--ink) 0%, var(--ink3) 100%); color: var(--white); text-align: center; position: relative; overflow: hidden; }
-        .hm-cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 30% 50%, rgba(37,99,235,0.20), transparent 50%); }
+        .hm-cta { padding: 7rem var(--gutter); background: linear-gradient(135deg, var(--ink) 0%, var(--ink3) 100%); color: var(--white); text-align: center; position: relative; overflow: hidden; }
+        .hm-cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 30% 50%, rgba(37,99,235,0.20), transparent 50%), radial-gradient(circle at 75% 60%, rgba(220,38,38,0.10), transparent 45%); }
+        .hm-cta-grid { position: absolute; inset: 0; opacity: 0.4; color: var(--gold3); }
+        .hm-cta-sparkles { position: absolute; pointer-events: none; }
+        .hm-cta-sparkles.left { top: 25%; left: 8%; width: 80px; height: 80px; color: var(--gold3); }
+        .hm-cta-sparkles.right { bottom: 20%; right: 10%; width: 100px; height: 100px; color: var(--gold3); }
         .hm-cta-inner { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; }
         .hm-cta-eyebrow { display: inline-flex; align-items: center; gap: 0.8rem; font-size: var(--t-eyebrow); font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold3); margin-bottom: 1.4rem; justify-content: center; }
         .hm-cta-eyebrow::before, .hm-cta-eyebrow::after { content: ''; width: 28px; height: 1.5px; background: var(--gold3); }
         .hm-cta-title { font-family: var(--serif); font-size: var(--t-h2); font-weight: 300; line-height: 1.05; margin-bottom: 1.4rem; }
         .hm-cta-title em { font-style: italic; color: var(--gold3); }
+        .hm-cta-title strong { font-weight: 600; }
         .hm-cta-lead { font-size: clamp(0.95rem, 1.3vw, 1.1rem); font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.72); margin-bottom: 2.4rem; }
         .hm-cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
       `}</style>
@@ -155,12 +233,16 @@ export default function Home() {
           </motion.p>
 
           <motion.div className="hm-hero-ctas" variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}>
-            <Link to="/about" className="btn">
-              His Story <i className="bi bi-arrow-right" />
-            </Link>
-            <Link to="/speaking" className="btn btn-ghost-light">
-              Book as Speaker <i className="bi bi-mic-fill" />
-            </Link>
+            <MagneticWrap strength={20}>
+              <Link to="/about" className="btn">
+                His Story <i className="bi bi-arrow-right" />
+              </Link>
+            </MagneticWrap>
+            <MagneticWrap strength={20}>
+              <Link to="/speaking" className="btn btn-ghost-light">
+                Book as Speaker <i className="bi bi-mic-fill" />
+              </Link>
+            </MagneticWrap>
           </motion.div>
         </motion.div>
 
@@ -205,14 +287,26 @@ export default function Home() {
 
       {/* PILLARS */}
       <section id="pillars" className="hm-pillars">
+        {/* Decorative blob accents */}
+        <div className="hm-pillars-blob1">
+          <BlobAccent color="#2563EB" opacity={0.05} />
+        </div>
+        <div className="hm-pillars-blob2">
+          <BlobAccent color="#DC2626" opacity={0.04} />
+        </div>
+        <div className="hm-pillars-bg" style={{ color: "var(--gold)" }}>
+          <DotPattern opacity={0.05} />
+        </div>
+
         <Reveal>
           <div className="hm-pillars-hd">
             <div className="hm-pillars-eyebrow">Who He Is</div>
             <h2 className="hm-pillars-title">
               One <em>man</em>. Many <em>fields</em>. One <em>calling</em>.
+              <ScribbleUnderline className="hm-pillars-title-underline" />
             </h2>
             <p className="hm-pillars-lead">
-              A rare convergence of pulpit, press, and pen — Dr. Hamilton has spent four decades
+              A rare convergence of pulpit, press, and pen. Dr. Hamilton has spent four decades
               moving fluidly between the church, the newsroom, the lecture hall, and the page.
             </p>
           </div>
@@ -221,7 +315,8 @@ export default function Home() {
         <div className="hm-pillars-grid">
           {[
             {
-              icon: "bi-person-arms-up",
+              num: "i",
+              Illo: IllustrationProphet,
               title: "The Prophet",
               em: "Prophet",
               desc: "Senior Shepherd of CCC PraiseVille Global. Prophet of the Celestial Church of Christ. Forty years of prophetic ministry across five nations.",
@@ -229,7 +324,8 @@ export default function Home() {
               cta: "Explore Ministries",
             },
             {
-              icon: "bi-book",
+              num: "ii",
+              Illo: IllustrationAuthor,
               title: "The Author",
               em: "Author",
               desc: "Four titles published by Lambert Academic Publishing across 18 European countries. From leadership to media studies to political philosophy.",
@@ -237,7 +333,8 @@ export default function Home() {
               cta: "Browse Books",
             },
             {
-              icon: "bi-newspaper",
+              num: "iii",
+              Illo: IllustrationJournalist,
               title: "The Journalist",
               em: "Journalist",
               desc: "Pioneer of The Glitterati in ThisDAY. Veteran editor at Vanguard. Thirty-five years shaping Nigerian public discourse through print.",
@@ -247,16 +344,19 @@ export default function Home() {
           ].map((p, i) => (
             <Reveal key={p.title} delay={0.1 + i * 0.1}>
               <Link to={p.to} className="hm-pillar">
-                <div className="hm-pillar-icon">
-                  <i className={`bi ${p.icon}`} />
+                <div className="hm-pillar-illo">
+                  <p.Illo />
                 </div>
-                <h3 className="hm-pillar-title">
-                  The <em>{p.em}</em>
-                </h3>
-                <p className="hm-pillar-desc">{p.desc}</p>
-                <span className="hm-pillar-link">
-                  {p.cta} <i className="bi bi-arrow-right" />
-                </span>
+                <div className="hm-pillar-content">
+                  <span className="hm-pillar-num">{p.num}</span>
+                  <h3 className="hm-pillar-title">
+                    The <em>{p.em}</em>
+                  </h3>
+                  <p className="hm-pillar-desc">{p.desc}</p>
+                  <span className="hm-pillar-link">
+                    {p.cta} <i className="bi bi-arrow-right" />
+                  </span>
+                </div>
               </Link>
             </Reveal>
           ))}
@@ -265,28 +365,42 @@ export default function Home() {
 
       {/* STATS */}
       <section className="hm-stats">
-        {[
-          { n: "40+", l: "Years of Ministry & Media" },
-          { n: "18", l: "Countries — Books Published" },
-          { n: "5", l: "Nations of Impact" },
-          { n: "1985", l: "First Class · UNILAG" },
-        ].map((s, i) => (
-          <Reveal key={i} delay={i * 0.05}>
-            <div className="hm-stat">
-              <div className="hm-stat-n">{s.n}</div>
-              <div className="hm-stat-l">{s.l}</div>
-            </div>
-          </Reveal>
-        ))}
+        <div className="hm-stats-bg">
+          <GridPattern color="currentColor" opacity={0.06} />
+        </div>
+        <div className="hm-stats-glow" />
+        <div className="hm-stats-inner">
+          {[
+            { icon: "bi-clock-history", n: 40, suffix: "+", l: "Years of Ministry & Media" },
+            { icon: "bi-globe-europe-africa", n: 18, l: "Countries — Books Published" },
+            { icon: "bi-flag-fill", n: 5, l: "Nations of Impact" },
+            { icon: "bi-mortarboard-fill", n: 1985, l: "First Class · UNILAG" },
+          ].map((s, i) => (
+            <Reveal key={i} delay={i * 0.08}>
+              <div className="hm-stat">
+                <div className="hm-stat-icon"><i className={`bi ${s.icon}`} /></div>
+                <div className="hm-stat-n">
+                  <AnimatedNumber to={s.n} suffix={s.suffix || ""} duration={1.5} />
+                </div>
+                <div className="hm-stat-l">{s.l}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </section>
 
       {/* JOURNAL TEASER */}
       <section className="hm-journal">
+        <div className="hm-journal-blob">
+          <BlobAccent color="#2563EB" opacity={0.04} />
+        </div>
         <Reveal>
           <div className="hm-journal-hd">
             <div>
               <div className="hm-pillars-eyebrow" style={{ justifyContent: "flex-start" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.8rem" }}>From the Journal</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.8rem" }}>
+                  <i className="bi bi-journal-richtext" /> From the Journal
+                </span>
               </div>
               <h2 className="hm-journal-title">
                 Latest <em>writings</em>
@@ -308,9 +422,13 @@ export default function Home() {
                 <div className="hm-post-body">
                   <div className="hm-post-meta">
                     <span className="hm-post-cat">{post.category}</span>
+                    <span className="hm-post-dot" />
                     <span className="hm-post-date">{new Date(post.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
                   </div>
                   <h3 className="hm-post-title">{post.title}</h3>
+                  <span className="hm-post-read">
+                    Read article <i className="bi bi-arrow-right" />
+                  </span>
                 </div>
               </Link>
             </Reveal>
@@ -320,13 +438,22 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="hm-cta">
+        <div className="hm-cta-grid">
+          <GridPattern color="currentColor" opacity={0.04} />
+        </div>
+        <div className="hm-cta-sparkles left">
+          <Sparkles color="currentColor" />
+        </div>
+        <div className="hm-cta-sparkles right">
+          <Sparkles color="currentColor" />
+        </div>
         <div className="hm-cta-inner">
           <Reveal>
             <div className="hm-cta-eyebrow">Engage Dr. Hamilton</div>
           </Reveal>
           <Reveal delay={0.1}>
             <h2 className="hm-cta-title">
-              Bring his <em>voice</em> to your platform
+              Bring his <em>voice</em> to your <strong>platform</strong>
             </h2>
           </Reveal>
           <Reveal delay={0.2}>
@@ -338,12 +465,16 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.3}>
             <div className="hm-cta-buttons">
-              <Link to="/speaking" className="btn">
-                Book as Speaker <i className="bi bi-mic-fill" />
-              </Link>
-              <Link to="/contact" className="btn btn-ghost-light">
-                Send a Message <i className="bi bi-envelope" />
-              </Link>
+              <MagneticWrap strength={20}>
+                <Link to="/speaking" className="btn">
+                  Book as Speaker <i className="bi bi-mic-fill" />
+                </Link>
+              </MagneticWrap>
+              <MagneticWrap strength={20}>
+                <Link to="/contact" className="btn btn-ghost-light">
+                  Send a Message <i className="bi bi-envelope" />
+                </Link>
+              </MagneticWrap>
             </div>
           </Reveal>
         </div>

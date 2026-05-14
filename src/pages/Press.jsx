@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import {
+  IconNewspaper, IconMic, BlobAccent, DotPattern, QuoteMark
+} from "../components/Illustrations";
 
 const FEATURES = [
   {
@@ -72,13 +75,15 @@ export default function Press() {
       <style>{`
         .pr-glitterati { padding: 5rem var(--gutter); background: linear-gradient(135deg, var(--ink2) 0%, var(--ink) 100%); color: var(--white); position: relative; overflow: hidden; }
         .pr-glitterati::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 80% 30%, rgba(37,99,235,0.20), transparent 50%); }
-        .pr-glitterati-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 140px 1fr; gap: 3rem; align-items: center; max-width: 1100px; margin: 0 auto; }
+        .pr-glitterati-pattern { position: absolute; inset: 0; opacity: 0.4; color: var(--gold3); pointer-events: none; }
+        .pr-glitterati-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 160px 1fr; gap: 3rem; align-items: center; max-width: 1100px; margin: 0 auto; }
         @media (max-width: 760px) { .pr-glitterati-inner { grid-template-columns: 1fr; gap: 1.8rem; text-align: center; } }
-        .pr-badge { width: 140px; height: 140px; border: 1.5px solid var(--gold3); border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem 0.6rem; }
+        .pr-badge { width: 160px; height: 160px; border: 2px solid var(--gold3); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem 0.6rem; position: relative; background: rgba(255,255,255,0.02); }
+        .pr-badge::before { content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; border: 1px solid var(--gold3); opacity: 0.4; border-radius: 4px; }
         @media (max-width: 760px) { .pr-badge { margin: 0 auto; } }
-        .pr-badge-t { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold3); margin-bottom: 0.4rem; }
-        .pr-badge-n { font-family: var(--serif); font-size: 2.2rem; font-weight: 300; font-style: italic; color: var(--gold); line-height: 0.95; }
-        .pr-badge-s { font-size: 0.45rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.4rem; }
+        .pr-badge-t { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold3); margin-bottom: 0.5rem; }
+        .pr-badge-n { font-family: var(--serif); font-size: 2.6rem; font-weight: 300; font-style: italic; color: var(--gold); line-height: 0.95; }
+        .pr-badge-s { font-size: 0.45rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 0.5rem; }
 
         .pr-glitterati-tag { font-size: var(--t-eyebrow); font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold3); margin-bottom: 0.8rem; }
         .pr-glitterati-title { font-family: var(--serif); font-size: clamp(1.4rem, 2.7vw, 2.2rem); font-weight: 300; font-style: italic; line-height: 1.2; margin-bottom: 1rem; }
@@ -102,8 +107,9 @@ export default function Press() {
         .pr-feature:hover::before { width: 100%; }
         .pr-feature:hover { border-color: var(--gold); box-shadow: var(--shadow-2); transform: translateY(-3px); }
 
-        .pr-feature-icon { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: var(--warm3); color: var(--gold); border-radius: 4px; font-size: 1.1rem; margin-bottom: 1.2rem; transition: background 0.3s, color 0.3s; }
-        .pr-feature:hover .pr-feature-icon { background: var(--gold); color: var(--white); }
+        .pr-feature-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--warm3); color: var(--gold); border-radius: 8px; margin-bottom: 1.2rem; transition: background 0.3s, color 0.3s, transform 0.3s; }
+        .pr-feature-icon i { font-size: 1.2rem; }
+        .pr-feature:hover .pr-feature-icon { background: var(--gold); color: var(--white); transform: rotate(-6deg) scale(1.05); }
         .pr-feature-type { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
         .pr-feature-pub { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-l); margin-bottom: 0.5rem; }
         .pr-feature-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 400; font-style: italic; line-height: 1.3; color: var(--ink); margin-bottom: 0.9rem; }
@@ -136,6 +142,9 @@ export default function Press() {
 
       {/* Glitterati hero */}
       <section className="pr-glitterati">
+        <div className="pr-glitterati-pattern">
+          <DotPattern color="currentColor" opacity={0.06} />
+        </div>
         <Reveal>
           <div className="pr-glitterati-inner">
             <div className="pr-badge">
