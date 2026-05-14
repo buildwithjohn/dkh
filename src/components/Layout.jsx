@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Nav from "./Nav";
 import Footer from "./Footer";
+import ScrollProgress from "./ScrollProgress";
+import BackToTop from "./BackToTop";
 
 /**
  * Layout — every page should be wrapped in this.
@@ -26,6 +28,7 @@ export default function Layout({ children, title, description, hideFooter = fals
 
   return (
     <>
+      <ScrollProgress />
       <Nav />
       <motion.main
         key={location.pathname}
@@ -38,6 +41,7 @@ export default function Layout({ children, title, description, hideFooter = fals
         {children}
       </motion.main>
       {!hideFooter && <Footer />}
+      <BackToTop />
     </>
   );
 }

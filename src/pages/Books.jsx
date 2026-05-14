@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import MagneticWrap from "../components/MagneticWrap";
+import { BlobAccent, DotPattern, ScribbleUnderline, IconBook } from "../components/Illustrations";
 import { usePaystack } from "../lib/paystack";
 
 const BOOKS = [
@@ -100,16 +102,25 @@ export default function Books() {
         .bk-publisher-text strong { display: block; font-family: var(--serif); font-size: 1.4rem; font-weight: 400; color: var(--white); line-height: 1; }
         .bk-publisher-text em { display: block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold3); margin-top: 0.3rem; font-style: normal; }
 
-        .bk-grid { padding: 5rem var(--gutter); background: var(--warm); display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .bk-grid { padding: 6rem var(--gutter); background: var(--warm); display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; position: relative; overflow: hidden; }
         @media (max-width: 900px) { .bk-grid { grid-template-columns: 1fr; padding: 4rem var(--gutter); } }
+        .bk-grid-blob1 { position: absolute; top: 10%; left: -180px; width: 400px; height: 400px; opacity: 0.4; pointer-events: none; }
+        .bk-grid-blob2 { position: absolute; bottom: 5%; right: -180px; width: 400px; height: 400px; opacity: 0.4; pointer-events: none; }
 
-        .bk-card { background: var(--warm); border: 1px solid var(--border-l); border-radius: 4px; padding: 2.5rem; transition: all 0.35s var(--ease-out); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .bk-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 2px; background: var(--gold); transition: width 0.5s; }
+        .bk-card { background: var(--warm); border: 1px solid var(--border-l); border-radius: 8px; padding: 2.5rem; transition: all 0.4s var(--ease-out); position: relative; overflow: hidden; display: flex; flex-direction: column; z-index: 2; }
+        .bk-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 3px; background: var(--gold); transition: width 0.5s; }
         .bk-card:hover::before { width: 100%; }
-        .bk-card:hover { border-color: var(--gold); box-shadow: var(--shadow-2); transform: translateY(-3px); }
+        .bk-card:hover { border-color: var(--gold); box-shadow: 0 30px 60px -25px rgba(37,99,235,0.25); transform: translateY(-5px); }
 
-        .bk-card-num { font-family: var(--serif); font-size: 4rem; font-weight: 300; color: var(--warm3); line-height: 1; margin-bottom: 1rem; transition: color 0.3s; }
+        .bk-card-spine { position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: linear-gradient(180deg, var(--gold) 0%, var(--gold2) 50%, var(--gold) 100%); opacity: 0; transition: opacity 0.35s; }
+        .bk-card:hover .bk-card-spine { opacity: 1; }
+
+        .bk-card-num { font-family: var(--serif); font-size: 4.5rem; font-weight: 300; color: var(--warm3); line-height: 1; margin-bottom: 1rem; transition: color 0.3s; font-style: italic; }
         .bk-card:hover .bk-card-num { color: var(--gold3); }
+
+        .bk-card-icon { position: absolute; top: 2rem; right: 2.5rem; width: 40px; height: 40px; color: var(--warm3); transition: color 0.3s, transform 0.3s; }
+        .bk-card-icon svg { width: 100%; height: 100%; }
+        .bk-card:hover .bk-card-icon { color: var(--gold3); transform: rotate(-8deg); }
 
         .bk-card-tag { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
         .bk-card-title { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; font-style: italic; line-height: 1.2; color: var(--ink); margin-bottom: 1rem; }
@@ -190,9 +201,13 @@ export default function Books() {
       </section>
 
       <section className="bk-grid">
+        <div className="bk-grid-blob1"><BlobAccent color="#2563EB" opacity={0.05} /></div>
+        <div className="bk-grid-blob2"><BlobAccent color="#DC2626" opacity={0.04} /></div>
         {BOOKS.map((book, i) => (
           <Reveal key={book.n} delay={i * 0.08}>
             <article className="bk-card">
+              <div className="bk-card-spine" />
+              <div className="bk-card-icon"><IconBook /></div>
               <div className="bk-card-num">{book.n}</div>
               <div className="bk-card-tag">{book.tag}</div>
               <h2 className="bk-card-title">{book.title}</h2>
@@ -206,9 +221,11 @@ export default function Books() {
                 <span className="bk-card-signed">Signed Copy</span>
               </div>
               <div className="bk-card-actions">
-                <button onClick={() => handleBuy(book)} className="btn" disabled={!paystackReady}>
-                  <i className="bi bi-cart-plus" /> Buy Now
-                </button>
+                <MagneticWrap strength={12} className="bk-card-magnetic">
+                  <button onClick={() => handleBuy(book)} className="btn" disabled={!paystackReady}>
+                    <i className="bi bi-cart-plus" /> Buy Now
+                  </button>
+                </MagneticWrap>
                 <a href={book.link} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
                   <i className="bi bi-box-arrow-up-right" /> Amazon
                 </a>

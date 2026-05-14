@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import { BlobAccent, DotPattern, ScribbleUnderline } from "../components/Illustrations";
 import { posts } from "../data/posts";
 
 export default function News() {
@@ -51,16 +52,18 @@ export default function News() {
         }
         .nw-search:focus { border-color: var(--gold); }
 
-        .nw-grid { padding: 4rem var(--gutter) 6rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; background: var(--warm); }
+        .nw-grid { padding: 4rem var(--gutter) 6rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; background: var(--warm); position: relative; overflow: hidden; }
         @media(max-width:1100px){ .nw-grid { grid-template-columns: repeat(2, 1fr); } }
         @media(max-width:640px){ .nw-grid { grid-template-columns: 1fr; padding: 3rem var(--gutter); } }
+        .nw-blob1 { position: absolute; top: 5%; right: -200px; width: 450px; height: 450px; opacity: 0.4; pointer-events: none; z-index: 0; }
+        .nw-blob2 { position: absolute; bottom: 10%; left: -200px; width: 400px; height: 400px; opacity: 0.4; pointer-events: none; z-index: 0; }
 
         .nw-post {
-          background: var(--warm); border: 1px solid var(--border-l); border-radius: 4px;
-          overflow: hidden; transition: all 0.35s var(--ease-out); cursor: pointer;
-          display: flex; flex-direction: column;
+          background: var(--warm); border: 1px solid var(--border-l); border-radius: 8px;
+          overflow: hidden; transition: all 0.4s var(--ease-out); cursor: pointer;
+          display: flex; flex-direction: column; position: relative; z-index: 2;
         }
-        .nw-post:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); border-color: var(--gold); }
+        .nw-post:hover { transform: translateY(-5px); box-shadow: 0 25px 50px -20px rgba(37,99,235,0.20); border-color: var(--gold); }
         .nw-post-img { aspect-ratio: 16/10; overflow: hidden; }
         .nw-post-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; transition: transform 0.6s; }
         .nw-post:hover .nw-post-img img { transform: scale(1.05); }
@@ -114,6 +117,8 @@ export default function News() {
       </div>
 
       <div className="nw-grid">
+        <div className="nw-blob1"><BlobAccent color="#2563EB" opacity={0.04} /></div>
+        <div className="nw-blob2"><BlobAccent color="#DC2626" opacity={0.03} /></div>
         {filtered.length === 0 ? (
           <div className="empty">
             <i className="bi bi-search" />

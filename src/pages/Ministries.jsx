@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import MagneticWrap from "../components/MagneticWrap";
+import { BlobAccent, DotPattern, ScribbleUnderline, Sparkles } from "../components/Illustrations";
 
 export default function Ministries() {
   return (
@@ -10,9 +12,14 @@ export default function Ministries() {
       description="CCC PraiseVille Global and ShaddaiVille Ministries International — Dr. Hamilton's twin pillars of ministry."
     >
       <style>{`
-        .mn-intro { padding: 6rem var(--gutter); background: var(--warm); text-align: center; }
-        .mn-intro-lead { font-family: var(--serif); font-size: clamp(1.3rem, 2.4vw, 1.85rem); font-style: italic; font-weight: 300; line-height: 1.5; color: var(--muted-l); max-width: 760px; margin: 0 auto; }
+        .mn-intro { padding: 6rem var(--gutter); background: var(--warm); text-align: center; position: relative; overflow: hidden; }
+        .mn-intro-blob1 { position: absolute; top: -100px; left: -200px; width: 450px; height: 450px; opacity: 0.5; pointer-events: none; }
+        .mn-intro-blob2 { position: absolute; bottom: -100px; right: -200px; width: 450px; height: 450px; opacity: 0.5; pointer-events: none; }
+        .mn-intro-lead { font-family: var(--serif); font-size: clamp(1.3rem, 2.4vw, 1.85rem); font-style: italic; font-weight: 300; line-height: 1.5; color: var(--muted-l); max-width: 760px; margin: 0 auto; position: relative; z-index: 2; }
         .mn-intro-lead em { color: var(--gold); font-style: italic; }
+        .mn-intro-divider { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 2.5rem auto 0; position: relative; z-index: 2; }
+        .mn-intro-divider::before, .mn-intro-divider::after { content: ''; height: 1px; width: 60px; background: var(--border-l); }
+        .mn-intro-divider-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
 
         .mn-panel { display: grid; grid-template-columns: 1fr 1fr; min-height: 600px; }
         @media (max-width: 900px) { .mn-panel { grid-template-columns: 1fr; min-height: auto; } }
@@ -60,8 +67,11 @@ export default function Ministries() {
 
         .mn-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; }
 
-        .mn-festival { padding: 6rem var(--gutter); background: linear-gradient(135deg, var(--ink) 0%, var(--ink3) 100%); color: var(--white); text-align: center; position: relative; overflow: hidden; }
+        .mn-festival { padding: 7rem var(--gutter); background: linear-gradient(135deg, var(--ink) 0%, var(--ink3) 100%); color: var(--white); text-align: center; position: relative; overflow: hidden; }
         .mn-festival::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, rgba(37,99,235,0.20), transparent 50%); }
+        .mn-festival-sparkles-l { position: absolute; top: 18%; left: 8%; width: 80px; height: 80px; color: var(--gold3); pointer-events: none; }
+        .mn-festival-sparkles-r { position: absolute; bottom: 18%; right: 8%; width: 90px; height: 90px; color: var(--gold3); pointer-events: none; }
+        .mn-festival-grid { position: absolute; inset: 0; opacity: 0.4; color: var(--gold3); pointer-events: none; }
         .mn-festival-inner { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; }
         .mn-festival-eyebrow { display: inline-flex; align-items: center; justify-content: center; gap: 0.8rem; font-size: var(--t-eyebrow); font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--gold3); margin-bottom: 1.4rem; }
         .mn-festival-eyebrow::before, .mn-festival-eyebrow::after { content: ''; width: 28px; height: 1.5px; background: var(--gold3); }
@@ -78,12 +88,21 @@ export default function Ministries() {
       />
 
       <section className="mn-intro">
+        <div className="mn-intro-blob1"><BlobAccent color="#2563EB" opacity={0.05} /></div>
+        <div className="mn-intro-blob2"><BlobAccent color="#DC2626" opacity={0.04} /></div>
         <Reveal>
           <p className="mn-intro-lead">
             <em>One is the church</em> — a Celestial Church of Christ parish with global reach.
             <em> The other is the school</em> — a non-denominational leadership academy training the
             next generation of Nigerian and African leaders. Both are free. Both are growing.
           </p>
+        </Reveal>
+        <Reveal delay={0.2}>
+          <div className="mn-intro-divider">
+            <div className="mn-intro-divider-icon">
+              <i className="bi bi-heart-fill" />
+            </div>
+          </div>
         </Reveal>
       </section>
 
@@ -179,6 +198,11 @@ export default function Ministries() {
 
       {/* Festival of the Word */}
       <section className="mn-festival">
+        <div className="mn-festival-grid">
+          <DotPattern color="currentColor" opacity={0.05} />
+        </div>
+        <div className="mn-festival-sparkles-l"><Sparkles color="currentColor" /></div>
+        <div className="mn-festival-sparkles-r"><Sparkles color="currentColor" /></div>
         <div className="mn-festival-inner">
           <Reveal>
             <div className="mn-festival-eyebrow"><i className="bi bi-calendar-event" /> Flagship Annual Event</div>
@@ -190,19 +214,23 @@ export default function Ministries() {
           </Reveal>
           <Reveal delay={0.2}>
             <p style={{ fontSize: "1.05rem", fontWeight: 300, lineHeight: 1.75, color: "rgba(255,255,255,0.7)", marginBottom: "2rem" }}>
-              CCC PraiseVille Global's flagship teaching conference — held annually since 2018. The 8th edition runs in
+              CCC PraiseVille Global's flagship teaching conference, held annually since 2018. The 8th edition runs in
               Lagos with delegates flying in from Berlin, London and the diaspora. A week of teaching, prophecy, leadership
               training and worship that has shaped the spiritual rhythm of a generation of CCC believers.
             </p>
           </Reveal>
           <Reveal delay={0.3}>
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-              <Link to="/speaking" className="btn">
-                Upcoming Events <i className="bi bi-arrow-right" />
-              </Link>
-              <Link to="/videos" className="btn btn-ghost-light">
-                Watch Past Sermons <i className="bi bi-play-circle" />
-              </Link>
+              <MagneticWrap strength={20}>
+                <Link to="/speaking" className="btn">
+                  Upcoming Events <i className="bi bi-arrow-right" />
+                </Link>
+              </MagneticWrap>
+              <MagneticWrap strength={20}>
+                <Link to="/videos" className="btn btn-ghost-light">
+                  Watch Past Sermons <i className="bi bi-play-circle" />
+                </Link>
+              </MagneticWrap>
             </div>
           </Reveal>
         </div>

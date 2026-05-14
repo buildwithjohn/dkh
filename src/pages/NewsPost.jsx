@@ -62,9 +62,26 @@ export default function NewsPost() {
         .np-feature-img { width: 100%; aspect-ratio: 16/8; overflow: hidden; }
         .np-feature-img img { width: 100%; height: 100%; object-fit: cover; object-position: center 22%; }
 
-        .np-body { max-width: 720px; margin: 0 auto; padding: 4.5rem var(--gutter) 5rem; }
+        .np-body { max-width: 720px; margin: 0 auto; padding: 4.5rem var(--gutter) 5rem; position: relative; }
         .np-p { font-family: 'Charter', 'Georgia', serif; font-size: 1.1rem; line-height: 1.85; color: var(--ink); margin-bottom: 1.4rem; font-weight: 400; }
-        .np-h3 { font-family: var(--serif); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin: 2.6rem 0 1rem; line-height: 1.3; letter-spacing: -0.005em; }
+        .np-p:first-of-type::first-letter {
+          font-family: var(--serif);
+          font-size: 4.6rem;
+          font-weight: 400;
+          font-style: italic;
+          float: left;
+          line-height: 0.85;
+          margin: 0.4rem 0.7rem 0 0;
+          color: var(--gold);
+        }
+        .np-h3 { font-family: var(--serif); font-size: 1.5rem; font-weight: 500; color: var(--ink); margin: 2.6rem 0 1rem; line-height: 1.3; letter-spacing: -0.005em; display: flex; align-items: center; gap: 0.7rem; }
+        .np-h3::before {
+          content: '';
+          width: 24px;
+          height: 2px;
+          background: var(--gold);
+          flex-shrink: 0;
+        }
 
         .np-share { max-width: 720px; margin: 0 auto; padding: 1.5rem var(--gutter); border-top: 1px solid var(--border-l); border-bottom: 1px solid var(--border-l); display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
         .np-share-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); }

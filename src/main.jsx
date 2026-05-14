@@ -17,27 +17,52 @@ const Contact = lazy(() => import("./pages/Contact"));
 const News = lazy(() => import("./pages/News"));
 const NewsPost = lazy(() => import("./pages/NewsPost"));
 
-// Lightweight loading indicator while a lazy chunk fetches
+// Branded loading indicator while lazy-loaded routes fetch
 function Loading() {
   return (
     <div style={{
-      minHeight: "60vh",
+      minHeight: "70vh",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "column",
-      gap: "1rem",
+      gap: "1.6rem",
       background: "var(--warm)",
+      paddingTop: "70px",
     }}>
       <div style={{
-        width: "32px",
-        height: "32px",
-        border: "2px solid rgba(37,99,235,0.15)",
-        borderTopColor: "var(--gold)",
-        borderRadius: "50%",
-        animation: "spin 0.8s linear infinite",
-      }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        position: "relative",
+        width: "70px",
+        height: "70px",
+      }}>
+        <img src="/kh-logo-nav.png" alt="" width="70" height="70" style={{
+          width: "70px",
+          height: "70px",
+          objectFit: "contain",
+          animation: "logoFloat 2s ease-in-out infinite",
+        }} />
+        <div style={{
+          position: "absolute",
+          inset: "-12px",
+          border: "2px solid rgba(37,99,235,0.15)",
+          borderTopColor: "var(--gold)",
+          borderRadius: "50%",
+          animation: "spin 1.2s linear infinite",
+        }} />
+      </div>
+      <div style={{
+        fontFamily: "var(--serif)",
+        fontSize: "0.9rem",
+        fontStyle: "italic",
+        color: "var(--muted-l)",
+        letterSpacing: "0.04em",
+      }}>
+        Loading...
+      </div>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes logoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+      `}</style>
     </div>
   );
 }

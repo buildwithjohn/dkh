@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
+import MagneticWrap from "../components/MagneticWrap";
+import { BlobAccent, DotPattern, Sparkles } from "../components/Illustrations";
 import { CONTACT_FORM } from "../lib/config";
 
 const INQUIRY_TYPES = [
@@ -70,8 +72,9 @@ export default function Contact() {
       description="Get in touch with Dr. Kunle Hamilton — speaking requests, interviews, ministry partnerships and general inquiries."
     >
       <style>{`
-        .ct-grid { padding: 5rem var(--gutter); background: var(--warm); display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; }
+        .ct-grid { padding: 5rem var(--gutter); background: var(--warm); display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; position: relative; overflow: hidden; }
         @media (max-width: 1000px) { .ct-grid { grid-template-columns: 1fr; gap: 3rem; } }
+        .ct-grid-blob { position: absolute; top: 5%; right: -200px; width: 450px; height: 450px; opacity: 0.4; pointer-events: none; }
 
         .ct-info { position: sticky; top: 100px; }
         @media (max-width: 1000px) { .ct-info { position: static; } }
@@ -114,8 +117,9 @@ export default function Contact() {
         .ct-submit-note i { color: var(--gold); }
 
         /* Success state */
-        .ct-success { text-align: center; padding: 2.5rem 1rem; }
-        .ct-success-icon { width: 80px; height: 80px; margin: 0 auto 1.4rem; background: var(--gold); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; }
+        .ct-success { text-align: center; padding: 2.5rem 1rem; position: relative; }
+        .ct-success-icon { position: relative; width: 80px; height: 80px; margin: 0 auto 1.4rem; background: var(--gold); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; box-shadow: 0 12px 30px -10px rgba(37,99,235,0.5); }
+        .ct-success-sparkle { position: absolute; width: 130px; height: 130px; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--gold); pointer-events: none; }
         .ct-success h3 { font-family: var(--serif); font-size: 2rem; font-weight: 300; font-style: italic; color: var(--ink); margin-bottom: 0.7rem; }
         .ct-success p { font-size: 0.95rem; color: var(--muted-l); line-height: 1.7; margin-bottom: 1.8rem; max-width: 420px; margin-left: auto; margin-right: auto; }
       `}</style>
@@ -129,6 +133,8 @@ export default function Contact() {
       />
 
       <section className="ct-grid">
+        <div className="ct-grid-blob"><BlobAccent color="#2563EB" opacity={0.05} /></div>
+
         {/* Left: Info */}
         <div className="ct-info">
           <Reveal>
@@ -200,8 +206,11 @@ export default function Contact() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                 >
-                  <div className="ct-success-icon">
-                    <i className="bi bi-check-lg" />
+                  <div style={{ position: "relative", width: "fit-content", margin: "0 auto" }}>
+                    <div className="ct-success-icon">
+                      <i className="bi bi-check-lg" />
+                    </div>
+                    <div className="ct-success-sparkle"><Sparkles color="currentColor" /></div>
                   </div>
                   <h3>Message Received</h3>
                   <p>
@@ -264,13 +273,15 @@ export default function Contact() {
                     <div className="ct-submit-note">
                       <i className="bi bi-shield-check" /> Your details stay private
                     </div>
-                    <button type="submit" className="btn" disabled={status === "submitting"}>
-                      {status === "submitting" ? (
-                        <><i className="bi bi-arrow-clockwise" /> Sending...</>
-                      ) : (
-                        <>Send Message <i className="bi bi-send-fill" /></>
-                      )}
-                    </button>
+                    <MagneticWrap strength={14}>
+                      <button type="submit" className="btn" disabled={status === "submitting"}>
+                        {status === "submitting" ? (
+                          <><i className="bi bi-arrow-clockwise" /> Sending...</>
+                        ) : (
+                          <>Send Message <i className="bi bi-send-fill" /></>
+                        )}
+                      </button>
+                    </MagneticWrap>
                   </div>
                 </motion.form>
               )}
