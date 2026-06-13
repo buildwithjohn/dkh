@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 
-// Eager-load Home (it's the entry point)
+// Eager-load Home (entry point)
 import Home from "./pages/Home";
 
 // Lazy-load every other page for code splitting
@@ -16,8 +16,12 @@ const Speaking = lazy(() => import("./pages/Speaking"));
 const Contact = lazy(() => import("./pages/Contact"));
 const News = lazy(() => import("./pages/News"));
 const NewsPost = lazy(() => import("./pages/NewsPost"));
+const Library = lazy(() => import("./pages/Library"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Refund = lazy(() => import("./pages/Refund"));
 
-// Branded loading indicator while lazy-loaded routes fetch
+// Branded loading indicator
 function Loading() {
   return (
     <div style={{
@@ -30,11 +34,7 @@ function Loading() {
       background: "var(--warm)",
       paddingTop: "70px",
     }}>
-      <div style={{
-        position: "relative",
-        width: "70px",
-        height: "70px",
-      }}>
+      <div style={{ position: "relative", width: "70px", height: "70px" }}>
         <img src="/kh-logo-nav.png" alt="" width="70" height="70" style={{
           width: "70px",
           height: "70px",
@@ -82,6 +82,11 @@ createRoot(document.getElementById("root")).render(
           <Route path="/contact" element={<Contact />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<NewsPost />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/library/:reference" element={<Library />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/refund" element={<Refund />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </Suspense>

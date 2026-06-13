@@ -1,56 +1,18 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import MagneticWrap from "../components/MagneticWrap";
-import { BlobAccent, DotPattern, ScribbleUnderline, IconBook } from "../components/Illustrations";
+import { BlobAccent, IconBook } from "../components/Illustrations";
 import { usePaystack } from "../lib/paystack";
-
-const BOOKS = [
-  {
-    n: "01",
-    tag: "Leadership · Self-Development",
-    title: "Releasing the Eagle in You",
-    desc: "Dr. Hamilton's landmark inspirational work on leadership and self-actualization — an eight-chapter guide to unlocking the God-given greatness inside every person.",
-    pub: "Lambert Academic Publishing",
-    countries: "18 European countries",
-    link: "https://www.amazon.com",
-    price: 8500,
-  },
-  {
-    n: "02",
-    tag: "Communication · Church Studies",
-    title: "Journey to Understanding",
-    desc: "An academic investigation into how style and content shape audience understanding. Uses his Nigerian church congregation and his Raypower 100.5 FM radio programme as the living laboratory.",
-    pub: "Lambert Academic Publishing · Amazon.com.be",
-    countries: "Available across EU",
-    link: "https://www.amazon.com.be",
-    price: 9500,
-  },
-  {
-    n: "03",
-    tag: "Politics · Digital Media",
-    title: "New Media and Democracy",
-    desc: "Nigeria's President and the Facebook Example. A pioneering study of how former President Goodluck Jonathan used Facebook in his 2011 campaign — one of Africa's first serious analyses of social media and electoral politics.",
-    pub: "Lambert Academic Publishing · Amazon.com",
-    countries: "Global distribution",
-    link: "https://www.amazon.com",
-    price: 9500,
-  },
-  {
-    n: "04",
-    tag: "Film · Media Studies",
-    title: "Nollywood and the Challenge of Movie Subtitles",
-    desc: "Co-authored with Yomi Daramola. A critical assessment of the Nollywood movie industry and the challenge of subtitling for global audiences — bridging Nigeria's film industry with international media scholarship.",
-    pub: "Lambert Academic Publishing · Amazon.com.be",
-    countries: "Available across EU",
-    link: "https://www.amazon.com.be",
-    price: 8500,
-  },
-];
+import { recordPurchase } from "../lib/purchases";
+import { books as BOOKS } from "../data/books";
+import { SITE } from "../lib/config";
 
 export default function Books() {
+  const navigate = useNavigate();
   const { pay, ready: paystackReady } = usePaystack();
   const [modal, setModal] = useState(null);
   const [buyer, setBuyer] = useState({ name: "", email: "" });
@@ -69,30 +31,54 @@ export default function Books() {
     pay({
       email: buyer.email,
       amount: book.price,
-      reference: `dkh-${book.title.toLowerCase().replace(/\s+/g, "-").slice(0, 30)}-${Date.now()}`,
+      reference: `dkh-${book.slug}-${Date.now()}`,
       metadata: {
         custom_fields: [
           { display_name: "Book", variable_name: "book", value: book.title },
           { display_name: "Customer", variable_name: "customer", value: buyer.name },
+          { display_name: "Type", variable_name: "type", value: "ebook" },
         ],
       },
       onSuccess: (ref) => {
         setPaying(false);
-        setModal({ book, success: true, ref });
+        // Save the purchase so /library/[ref] can show the download
+        recordPurchase({
+          reference: ref,
+          bookSlug: book.slug,
+          email: buyer.email,
+          name: buyer.name,
+          amount: book.price,
+        });
+        // Redirect to the download page
+        setModal(null);
+        navigate(`/library/${ref}`);
       },
       onClose: () => setPaying(false),
     });
   };
 
+  const requestHardCopy = (book) => {
+    const message = `Hi Dr. Hamilton — I'd like to order a signed hard copy of "${book.title}" (₦${book.physicalPrice.toLocaleString()}). Please let me know about delivery options.`;
+    const wa = `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+    window.open(wa, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <Layout
       title="Books"
-      description="Dr. Kunle Hamilton's four published works — leadership, communication, politics, film studies. Published by Lambert Academic Publishing."
+      description="Dr. Kunle Hamilton's four published works — available as instant ebook downloads, with signed hard copies on request."
     >
       <style>{`
-        .bk-intro { padding: 5rem var(--gutter); background: var(--warm); text-align: center; }
-        .bk-intro-lead { font-family: var(--serif); font-size: clamp(1.3rem, 2.4vw, 1.85rem); font-style: italic; font-weight: 300; line-height: 1.5; color: var(--muted-l); max-width: 760px; margin: 0 auto; }
+        .bk-intro { padding: 5rem var(--gutter); background: var(--warm); text-align: center; position: relative; overflow: hidden; }
+        .bk-intro-lead { font-family: var(--serif); font-size: clamp(1.3rem, 2.4vw, 1.85rem); font-style: italic; font-weight: 300; line-height: 1.5; color: var(--muted-l); max-width: 760px; margin: 0 auto; position: relative; z-index: 2; }
         .bk-intro-lead em { color: var(--gold); }
+
+        .bk-instructions { max-width: 880px; margin: 2.5rem auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; position: relative; z-index: 2; }
+        @media (max-width: 700px) { .bk-instructions { grid-template-columns: 1fr; } }
+        .bk-inst { padding: 1.5rem 1.6rem; background: var(--warm2); border: 1px solid var(--border-l); border-radius: 8px; text-align: left; display: flex; gap: 1rem; align-items: flex-start; }
+        .bk-inst-icon { width: 42px; height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 8px; font-size: 1.1rem; }
+        .bk-inst strong { display: block; font-family: var(--serif); font-size: 1.1rem; font-style: italic; color: var(--ink); font-weight: 400; margin-bottom: 0.3rem; }
+        .bk-inst span { display: block; font-size: 0.82rem; color: var(--muted-l); line-height: 1.55; }
 
         .bk-publisher-strip { background: var(--ink); color: var(--white); padding: 2.5rem var(--gutter); border-top: 1px solid var(--border-d); border-bottom: 1px solid var(--border-d); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; align-items: center; }
         @media (max-width: 800px) { .bk-publisher-strip { grid-template-columns: 1fr; text-align: center; gap: 1rem; padding: 3rem var(--gutter); } }
@@ -111,13 +97,11 @@ export default function Books() {
         .bk-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 3px; background: var(--gold); transition: width 0.5s; }
         .bk-card:hover::before { width: 100%; }
         .bk-card:hover { border-color: var(--gold); box-shadow: 0 30px 60px -25px rgba(37,99,235,0.25); transform: translateY(-5px); }
-
         .bk-card-spine { position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: linear-gradient(180deg, var(--gold) 0%, var(--gold2) 50%, var(--gold) 100%); opacity: 0; transition: opacity 0.35s; }
         .bk-card:hover .bk-card-spine { opacity: 1; }
 
         .bk-card-num { font-family: var(--serif); font-size: 4.5rem; font-weight: 300; color: var(--warm3); line-height: 1; margin-bottom: 1rem; transition: color 0.3s; font-style: italic; }
         .bk-card:hover .bk-card-num { color: var(--gold3); }
-
         .bk-card-icon { position: absolute; top: 2rem; right: 2.5rem; width: 40px; height: 40px; color: var(--warm3); transition: color 0.3s, transform 0.3s; }
         .bk-card-icon svg { width: 100%; height: 100%; }
         .bk-card:hover .bk-card-icon { color: var(--gold3); transform: rotate(-8deg); }
@@ -125,24 +109,27 @@ export default function Books() {
         .bk-card-tag { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
         .bk-card-title { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; font-style: italic; line-height: 1.2; color: var(--ink); margin-bottom: 1rem; }
         .bk-card-desc { font-size: 0.92rem; font-weight: 300; line-height: 1.7; color: var(--muted-l); margin-bottom: 1.4rem; flex: 1; }
-
-        .bk-card-pub { display: flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; font-weight: 500; color: var(--muted-l); padding: 0.8rem 0; border-top: 1px solid var(--border-l); border-bottom: 1px solid var(--border-l); margin-bottom: 1.4rem; }
+        .bk-card-pub { display: flex; align-items: center; gap: 0.5rem; font-size: 0.7rem; font-weight: 500; color: var(--muted-l); padding: 0.8rem 0; border-top: 1px solid var(--border-l); border-bottom: 1px solid var(--border-l); margin-bottom: 1.2rem; }
         .bk-card-pub i { color: var(--gold); }
 
-        .bk-card-price-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1.2rem; }
-        .bk-card-price { font-family: var(--serif); font-size: 1.7rem; font-weight: 400; color: var(--gold); }
-        .bk-card-signed { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-l); }
+        .bk-card-price-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+        .bk-card-price { display: flex; align-items: baseline; gap: 0.5rem; }
+        .bk-card-amount { font-family: var(--serif); font-size: 1.9rem; font-weight: 400; color: var(--gold); line-height: 1; }
+        .bk-card-type { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted-l); }
+        .bk-card-badge { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); padding: 0.4rem 0.7rem; background: rgba(37,99,235,0.08); border-radius: 4px; }
+        .bk-card-badge i { font-size: 0.7rem; }
 
-        .bk-card-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
-        .bk-card-actions .btn { flex: 1; min-width: 0; justify-content: center; padding: 0.85rem 1.2rem; }
-        .bk-card-actions .btn-ghost { flex: 0 0 auto; padding: 0.85rem 1.2rem; }
+        .bk-card-actions { display: flex; flex-direction: column; gap: 0.6rem; }
+        .bk-card-actions .btn { justify-content: center; padding: 0.85rem 1.2rem; }
+        .bk-card-hardcopy { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; color: var(--muted-l); padding: 0.6rem; text-decoration: none; cursor: pointer; background: transparent; border: 1px dashed var(--border-l); border-radius: 4px; transition: all 0.25s; }
+        .bk-card-hardcopy:hover { color: var(--gold); border-color: var(--gold); }
 
         /* Modal */
         .modal-overlay { position: fixed; inset: 0; z-index: 9000; background: rgba(9,21,42,0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
         .modal { background: var(--warm); width: 100%; max-width: 480px; border-top: 4px solid var(--gold); border-radius: 4px; padding: 2.5rem 2rem; box-shadow: 0 30px 80px rgba(0,0,0,0.4); max-height: 92vh; overflow-y: auto; }
         .modal-eyebrow { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.5rem; }
         .modal-title { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; font-style: italic; line-height: 1.2; color: var(--ink); margin-bottom: 0.5rem; }
-        .modal-sub { font-size: 0.78rem; color: var(--muted-l); margin-bottom: 1.6rem; }
+        .modal-sub { font-size: 0.78rem; color: var(--muted-l); margin-bottom: 1.6rem; line-height: 1.55; }
         .modal-form { display: flex; flex-direction: column; gap: 1rem; }
         .modal-field label { display: block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-l); margin-bottom: 0.4rem; }
         .modal-field input { width: 100%; background: var(--warm2); border: 1px solid var(--border-l); padding: 0.85rem 0.95rem; font-family: var(--sans); font-size: 0.9rem; outline: none; border-radius: 3px; transition: border-color 0.2s; }
@@ -151,12 +138,16 @@ export default function Books() {
         .modal-cancel:hover { color: var(--ink); }
         .modal-footer { padding-top: 1rem; border-top: 1px solid var(--border-l); margin-top: 0.5rem; font-size: 0.7rem; color: var(--muted-l); text-align: center; }
         .modal-footer i { color: var(--gold); }
+        .modal-perks { display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem 1.1rem; background: var(--warm2); border-radius: 6px; margin-bottom: 1.4rem; }
+        .modal-perk { display: flex; align-items: center; gap: 0.7rem; font-size: 0.78rem; color: var(--muted-l); }
+        .modal-perk i { color: var(--gold); font-size: 0.95rem; }
+        .modal-perk strong { color: var(--ink); }
       `}</style>
 
       <PageHero
         eyebrow={<><i className="bi bi-book-half" /> Published Works</>}
-        title={<><strong>Four</strong> books. <em>Eighteen</em> countries.</>}
-        subtitle="Dr. Hamilton's written legacy spans leadership, communication, political philosophy and film studies — published by Lambert Academic Publishing and distributed across Europe and beyond."
+        title={<><strong>Four</strong> books. <em>Eighteen</em> countries. <em>Instant</em> download.</>}
+        subtitle="Dr. Hamilton's written legacy — leadership, communication, political philosophy and film studies. Buy the ebook now and read tonight. Want a signed hard copy? One call away."
         image="/about.jpg"
         variant="dark"
       />
@@ -164,9 +155,26 @@ export default function Books() {
       <section className="bk-intro">
         <Reveal>
           <p className="bk-intro-lead">
-            <em>Buy a signed copy</em> directly from Dr. Hamilton — secure payment by Paystack,
-            delivered within Nigeria. Or view the academic editions on Amazon worldwide.
+            <em>Buy the ebook</em>, get an instant download. <em>Want a signed hard copy?</em> Call or WhatsApp to arrange delivery anywhere in the world.
           </p>
+        </Reveal>
+        <Reveal delay={0.15}>
+          <div className="bk-instructions">
+            <div className="bk-inst">
+              <div className="bk-inst-icon"><i className="bi bi-cloud-download-fill" /></div>
+              <div>
+                <strong>1. Ebook</strong>
+                <span>Pay with Paystack (cards, USSD, bank transfer). Get instant download access for {30} days.</span>
+              </div>
+            </div>
+            <div className="bk-inst">
+              <div className="bk-inst-icon"><i className="bi bi-telephone-fill" /></div>
+              <div>
+                <strong>2. Signed Hard Copy</strong>
+                <span>Call <a href={`tel:${SITE.phoneE164}`} style={{ color: "var(--gold)", fontWeight: 600 }}>{SITE.phone}</a> or WhatsApp to request — anywhere in the world.</span>
+              </div>
+            </div>
+          </div>
         </Reveal>
       </section>
 
@@ -204,7 +212,7 @@ export default function Books() {
         <div className="bk-grid-blob1"><BlobAccent color="#2563EB" opacity={0.05} /></div>
         <div className="bk-grid-blob2"><BlobAccent color="#DC2626" opacity={0.04} /></div>
         {BOOKS.map((book, i) => (
-          <Reveal key={book.n} delay={i * 0.08}>
+          <Reveal key={book.slug} delay={i * 0.08}>
             <article className="bk-card">
               <div className="bk-card-spine" />
               <div className="bk-card-icon"><IconBook /></div>
@@ -217,18 +225,23 @@ export default function Books() {
                 <span>{book.pub} · {book.countries}</span>
               </div>
               <div className="bk-card-price-row">
-                <span className="bk-card-price">₦{book.price.toLocaleString()}</span>
-                <span className="bk-card-signed">Signed Copy</span>
+                <div className="bk-card-price">
+                  <span className="bk-card-amount">₦{book.price.toLocaleString()}</span>
+                  <span className="bk-card-type">Ebook · PDF</span>
+                </div>
+                <span className="bk-card-badge">
+                  <i className="bi bi-lightning-charge-fill" /> Instant
+                </span>
               </div>
               <div className="bk-card-actions">
-                <MagneticWrap strength={12} className="bk-card-magnetic">
+                <MagneticWrap strength={12}>
                   <button onClick={() => handleBuy(book)} className="btn" disabled={!paystackReady}>
-                    <i className="bi bi-cart-plus" /> Buy Now
+                    <i className="bi bi-cart-plus" /> Buy Ebook · ₦{book.price.toLocaleString()}
                   </button>
                 </MagneticWrap>
-                <a href={book.link} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-                  <i className="bi bi-box-arrow-up-right" /> Amazon
-                </a>
+                <button onClick={() => requestHardCopy(book)} className="bk-card-hardcopy">
+                  <i className="bi bi-telephone" /> Want a signed hard copy? Call us
+                </button>
               </div>
             </article>
           </Reveal>
@@ -253,46 +266,37 @@ export default function Books() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
-              {modal.success ? (
-                <div style={{ textAlign: "center", padding: "0.5rem 0" }}>
-                  <div style={{ width: "72px", height: "72px", margin: "0 auto 1.2rem", background: "var(--gold)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", color: "var(--white)" }}>
-                    <i className="bi bi-check-lg" />
-                  </div>
-                  <h3 style={{ fontFamily: "var(--serif)", fontSize: "1.7rem", fontWeight: 300, fontStyle: "italic", color: "var(--ink)", marginBottom: "0.7rem" }}>Thank You</h3>
-                  <p style={{ fontSize: "0.92rem", color: "var(--muted-l)", lineHeight: 1.65, marginBottom: "0.5rem" }}>
-                    Your purchase of <strong style={{ color: "var(--ink)" }}>{modal.book.title}</strong> is confirmed.
-                  </p>
-                  <p style={{ fontSize: "0.7rem", color: "var(--muted-l)", fontFamily: "monospace", marginBottom: "1.5rem" }}>
-                    Reference: {modal.ref}
-                  </p>
-                  <button className="btn" onClick={() => setModal(null)}>Close</button>
+              <div className="modal-eyebrow"><i className="bi bi-cloud-download-fill" /> Buy Ebook</div>
+              <h3 className="modal-title">{modal.book.title}</h3>
+              <p className="modal-sub">
+                ₦{modal.book.price.toLocaleString()} · {modal.book.pages} pages · PDF · Instant download after payment
+              </p>
+
+              <div className="modal-perks">
+                <div className="modal-perk"><i className="bi bi-lightning-charge-fill" /> Instant access — download right after payment</div>
+                <div className="modal-perk"><i className="bi bi-shield-check" /> Secure checkout by <strong>Paystack</strong></div>
+                <div className="modal-perk"><i className="bi bi-arrow-repeat" /> Re-download for 30 days from this browser</div>
+              </div>
+
+              <form onSubmit={confirm} className="modal-form">
+                <div className="modal-field">
+                  <label htmlFor="buy-name">Your Name</label>
+                  <input id="buy-name" type="text" required value={buyer.name} onChange={(e) => setBuyer({ ...buyer, name: e.target.value })} placeholder="Full name" />
                 </div>
-              ) : (
-                <>
-                  <div className="modal-eyebrow"><i className="bi bi-cart-fill" /> Order Book</div>
-                  <h3 className="modal-title">{modal.book.title}</h3>
-                  <p className="modal-sub">₦{modal.book.price.toLocaleString()} · Signed by Dr. Hamilton · Delivered within Nigeria</p>
-                  <form onSubmit={confirm} className="modal-form">
-                    <div className="modal-field">
-                      <label htmlFor="buy-name">Your Name</label>
-                      <input id="buy-name" type="text" required value={buyer.name} onChange={(e) => setBuyer({ ...buyer, name: e.target.value })} placeholder="Full name" />
-                    </div>
-                    <div className="modal-field">
-                      <label htmlFor="buy-email">Email Address</label>
-                      <input id="buy-email" type="email" required value={buyer.email} onChange={(e) => setBuyer({ ...buyer, email: e.target.value })} placeholder="your@email.com" />
-                    </div>
-                    <button type="submit" className="btn" disabled={paying || !paystackReady} style={{ marginTop: "0.4rem", justifyContent: "center" }}>
-                      {paying ? (<><i className="bi bi-arrow-clockwise" /> Processing...</>)
-                        : !paystackReady ? "Loading..."
-                        : (<>Pay ₦{modal.book.price.toLocaleString()} via Paystack <i className="bi bi-arrow-right" /></>)}
-                    </button>
-                    <button type="button" onClick={() => setModal(null)} disabled={paying} className="modal-cancel">Cancel</button>
-                    <div className="modal-footer">
-                      <i className="bi bi-shield-lock-fill" /> Secure payment by <strong style={{ color: "var(--ink)" }}>Paystack</strong> · All Nigerian cards accepted
-                    </div>
-                  </form>
-                </>
-              )}
+                <div className="modal-field">
+                  <label htmlFor="buy-email">Email Address</label>
+                  <input id="buy-email" type="email" required value={buyer.email} onChange={(e) => setBuyer({ ...buyer, email: e.target.value })} placeholder="your@email.com" />
+                </div>
+                <button type="submit" className="btn" disabled={paying || !paystackReady} style={{ marginTop: "0.4rem", justifyContent: "center" }}>
+                  {paying ? (<><i className="bi bi-arrow-clockwise" /> Processing...</>)
+                    : !paystackReady ? "Loading..."
+                    : (<>Pay ₦{modal.book.price.toLocaleString()} via Paystack <i className="bi bi-arrow-right" /></>)}
+                </button>
+                <button type="button" onClick={() => setModal(null)} disabled={paying} className="modal-cancel">Cancel</button>
+                <div className="modal-footer">
+                  <i className="bi bi-shield-lock-fill" /> Secure payment by <strong style={{ color: "var(--ink)" }}>Paystack</strong> · All cards & USSD accepted
+                </div>
+              </form>
             </motion.div>
           </motion.div>
         )}

@@ -5,7 +5,7 @@ import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import MagneticWrap from "../components/MagneticWrap";
 import { BlobAccent, DotPattern, Sparkles } from "../components/Illustrations";
-import { CONTACT_FORM } from "../lib/config";
+import { CONTACT_FORM, SITE } from "../lib/config";
 
 const INQUIRY_TYPES = [
   { value: "speaking", label: "Speaking Engagement", icon: "bi-mic-fill" },
@@ -149,16 +149,34 @@ export default function Contact() {
           </Reveal>
 
           <div className="ct-details">
-            <Reveal delay={0.1}>
-              <div className="ct-detail">
+            <Reveal delay={0.05}>
+              <a href={`mailto:${SITE.email}`} className="ct-detail" style={{ textDecoration: "none", color: "inherit" }}>
                 <div className="ct-detail-icon"><i className="bi bi-envelope-fill" /></div>
                 <div>
                   <div className="ct-detail-label">Email</div>
-                  <div className="ct-detail-val">info@kunlehamilton.com</div>
+                  <div className="ct-detail-val">{SITE.email}</div>
                 </div>
-              </div>
+              </a>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <a href={`tel:${SITE.phoneE164}`} className="ct-detail" style={{ textDecoration: "none", color: "inherit" }}>
+                <div className="ct-detail-icon"><i className="bi bi-telephone-fill" /></div>
+                <div>
+                  <div className="ct-detail-label">Phone</div>
+                  <div className="ct-detail-val">{SITE.phone}</div>
+                </div>
+              </a>
             </Reveal>
             <Reveal delay={0.15}>
+              <a href={`https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="ct-detail" style={{ textDecoration: "none", color: "inherit" }}>
+                <div className="ct-detail-icon" style={{ background: "#25D366" }}><i className="bi bi-whatsapp" /></div>
+                <div>
+                  <div className="ct-detail-label">WhatsApp</div>
+                  <div className="ct-detail-val">{SITE.phone}</div>
+                </div>
+              </a>
+            </Reveal>
+            <Reveal delay={0.2}>
               <div className="ct-detail">
                 <div className="ct-detail-icon"><i className="bi bi-geo-alt-fill" /></div>
                 <div>
@@ -167,21 +185,12 @@ export default function Contact() {
                 </div>
               </div>
             </Reveal>
-            <Reveal delay={0.2}>
+            <Reveal delay={0.25}>
               <div className="ct-detail">
                 <div className="ct-detail-icon"><i className="bi bi-globe2" /></div>
                 <div>
                   <div className="ct-detail-label">Branches</div>
                   <div className="ct-detail-val">Berlin · London · USA</div>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal delay={0.25}>
-              <div className="ct-detail">
-                <div className="ct-detail-icon"><i className="bi bi-clock-fill" /></div>
-                <div>
-                  <div className="ct-detail-label">Typical Response</div>
-                  <div className="ct-detail-val">Within 48 hours</div>
                 </div>
               </div>
             </Reveal>

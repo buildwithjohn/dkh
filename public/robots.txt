@@ -1,0 +1,9 @@
+# robots.txt for kunlehamilton.com
+# All crawlers welcome.
+User-agent: *
+Allow: /
+
+# Don't crawl personal library pages
+Disallow: /library/
+
+Sitemap: https://www.kunlehamilton.com/sitemap.xml

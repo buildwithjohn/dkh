@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import PageHero from "../components/PageHero";
 import Reveal from "../components/Reveal";
 import MagneticWrap from "../components/MagneticWrap";
+import { SITE } from "../lib/config";
 import {
   IconMic, IconChurch, IconBook, IconGraduation, IconBriefcase,
   BlobAccent, DotPattern, ScribbleUnderline, QuoteMark, Sparkles
@@ -211,8 +212,8 @@ export default function Speaking() {
               <Link to="/contact" className="btn">
                 <i className="bi bi-envelope-fill" /> Send Speaking Request
               </Link>
-              <a href="tel:+234" className="btn btn-ghost-light">
-                <i className="bi bi-telephone-fill" /> Call Direct
+              <a href={`tel:${SITE.phoneE164}`} className="btn btn-ghost-light">
+                <i className="bi bi-telephone-fill" /> Call {SITE.phone}
               </a>
             </div>
           </Reveal>

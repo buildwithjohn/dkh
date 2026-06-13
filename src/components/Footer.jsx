@@ -133,22 +133,22 @@ export default function Footer() {
             <div className="ft-col">
               <h4 className="ft-col-h">Engage</h4>
               <Link to="/speaking"><i className="bi bi-chevron-right" /> Book as Speaker</Link>
-              <Link to="/contact"><i className="bi bi-chevron-right" /> Request Interview</Link>
+              <Link to="/library"><i className="bi bi-chevron-right" /> My Library</Link>
               <Link to="/ministries"><i className="bi bi-chevron-right" /> Ministries</Link>
               <Link to="/contact"><i className="bi bi-chevron-right" /> Contact</Link>
             </div>
 
-            {/* External */}
+            {/* Legal & External */}
             <div className="ft-col">
-              <h4 className="ft-col-h">External</h4>
+              <h4 className="ft-col-h">Legal & More</h4>
+              <Link to="/privacy"><i className="bi bi-chevron-right" /> Privacy Policy</Link>
+              <Link to="/terms"><i className="bi bi-chevron-right" /> Terms of Service</Link>
+              <Link to="/refund"><i className="bi bi-chevron-right" /> Refund Policy</Link>
               <a href="https://www.shaddaiville.org" target="_blank" rel="noopener noreferrer">
                 <i className="bi bi-box-arrow-up-right" /> ShaddaiVille.org
               </a>
               <a href="https://www.youtube.com/@cccpraiseville" target="_blank" rel="noopener noreferrer">
                 <i className="bi bi-youtube" /> YouTube Channel
-              </a>
-              <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer">
-                <i className="bi bi-cart" /> Buy Books on Amazon
               </a>
             </div>
           </div>

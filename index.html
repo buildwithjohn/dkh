@@ -44,6 +44,60 @@
     <!-- Preload critical assets -->
     <link rel="preload" as="image" href="/hero.jpg" fetchpriority="high" />
     <link rel="preload" as="image" href="/kh-logo-nav.png" />
+
+    <!-- Structured data: Person + WebSite for rich Google results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://www.kunlehamilton.com/#person",
+          "name": "Dr. Kunle Hamilton",
+          "givenName": "Kunle",
+          "familyName": "Hamilton",
+          "honorificPrefix": "Dr.",
+          "url": "https://www.kunlehamilton.com",
+          "image": "https://www.kunlehamilton.com/hero.jpg",
+          "jobTitle": [
+            "Prophet",
+            "Author",
+            "Senior Shepherd",
+            "Veteran Journalist"
+          ],
+          "description": "Nigeria's foremost prophet-scholar. Senior Shepherd of CCC PraiseVille Global, Founder of ShaddaiVille Ministries International, international author and veteran journalist. Pioneer of The Glitterati in ThisDAY.",
+          "alumniOf": {
+            "@type": "CollegeOrUniversity",
+            "name": "University of Lagos"
+          },
+          "worksFor": [
+            {
+              "@type": "Organization",
+              "name": "CCC PraiseVille Global"
+            },
+            {
+              "@type": "Organization",
+              "name": "ShaddaiVille Ministries International",
+              "url": "https://www.shaddaiville.org"
+            }
+          ],
+          "sameAs": [
+            "https://www.youtube.com/@cccpraiseville",
+            "https://www.shaddaiville.org"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.kunlehamilton.com/#website",
+          "url": "https://www.kunlehamilton.com",
+          "name": "Dr. Kunle Hamilton",
+          "description": "Official website of Dr. Kunle Hamilton — Prophet, Author, Senior Shepherd of CCC PraiseVille Global.",
+          "publisher": { "@id": "https://www.kunlehamilton.com/#person" },
+          "inLanguage": "en-NG"
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
