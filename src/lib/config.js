@@ -20,8 +20,8 @@ export const SITE = {
 // 4. Paste both below
 // Until configured, submissions fall back to localStorage so nothing is lost.
 export const BEEHIIV = {
-  publicationId: "YOUR_BEEHIIV_PUBLICATION_ID",  // e.g. "pub_xxxx-xxxx-xxxx"
-  apiKey: "YOUR_BEEHIIV_API_KEY",                // server-side only; see note in subscribe.js
+  publicationId: "pub_1c84ed93-456a-43ab-95eb-fe2f348fed35",  // V2 ID — modern API
+  apiKey: "YOUR_BEEHIIV_API_KEY",                              // ⚠ Still needed — get from Beehiiv → Settings → Integrations → API Keys (Generate a key)
 };
 
 // ── EMAIL SUBSCRIBE (Formspree fallback / contact form) ──
@@ -42,7 +42,7 @@ export const CONTACT_FORM = {
 // 2. Use TEST key during development (starts with pk_test_)
 // 3. Replace with LIVE key (pk_live_) once Paystack approves your business
 export const PAYSTACK = {
-  publicKey: "pk_test_YOUR_PAYSTACK_PUBLIC_KEY",
+  publicKey: "pk_test_cdc139b1bcf5ca89d0afc5a86cc2083aa09aef9e",
   currency: "NGN",
   merchantEmail: "info@kunlehamilton.com",
 };

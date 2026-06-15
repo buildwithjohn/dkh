@@ -146,7 +146,7 @@ export default function Books() {
 
       <PageHero
         eyebrow={<><i className="bi bi-book-half" /> Published Works</>}
-        title={<><strong>Four</strong> books. <em>Eighteen</em> countries. <em>Instant</em> download.</>}
+        title={<><strong>Four</strong> books. <em>Eighteen</em> countries. <em>Read</em> on-site.</>}
         subtitle="Dr. Hamilton's written legacy — leadership, communication, political philosophy and film studies. Buy the ebook now and read tonight. Want a signed hard copy? One call away."
         image="/about.jpg"
         variant="dark"
@@ -155,16 +155,16 @@ export default function Books() {
       <section className="bk-intro">
         <Reveal>
           <p className="bk-intro-lead">
-            <em>Buy the ebook</em>, get an instant download. <em>Want a signed hard copy?</em> Call or WhatsApp to arrange delivery anywhere in the world.
+            <em>Buy the ebook</em>, read it instantly in your browser. <em>Want a signed hard copy?</em> Call or WhatsApp to arrange delivery anywhere in the world.
           </p>
         </Reveal>
         <Reveal delay={0.15}>
           <div className="bk-instructions">
             <div className="bk-inst">
-              <div className="bk-inst-icon"><i className="bi bi-cloud-download-fill" /></div>
+              <div className="bk-inst-icon"><i className="bi bi-book-half" /></div>
               <div>
                 <strong>1. Ebook</strong>
-                <span>Pay with Paystack (cards, USSD, bank transfer). Get instant download access for {30} days.</span>
+                <span>Pay with Paystack (cards, USSD, bank transfer). Read instantly in your browser. Re-read for 30 days. No downloads.</span>
               </div>
             </div>
             <div className="bk-inst">
@@ -230,7 +230,7 @@ export default function Books() {
                   <span className="bk-card-type">Ebook · PDF</span>
                 </div>
                 <span className="bk-card-badge">
-                  <i className="bi bi-lightning-charge-fill" /> Instant
+                  <i className="bi bi-book-half" /> Read on-site
                 </span>
               </div>
               <div className="bk-card-actions">
@@ -266,16 +266,17 @@ export default function Books() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="modal-eyebrow"><i className="bi bi-cloud-download-fill" /> Buy Ebook</div>
+              <div className="modal-eyebrow"><i className="bi bi-book-half" /> Buy Ebook</div>
               <h3 className="modal-title">{modal.book.title}</h3>
               <p className="modal-sub">
-                ₦{modal.book.price.toLocaleString()} · {modal.book.pages} pages · PDF · Instant download after payment
+                ₦{modal.book.price.toLocaleString()} · {modal.book.pages} pages · Read securely in your browser
+
               </p>
 
               <div className="modal-perks">
-                <div className="modal-perk"><i className="bi bi-lightning-charge-fill" /> Instant access — download right after payment</div>
-                <div className="modal-perk"><i className="bi bi-shield-check" /> Secure checkout by <strong>Paystack</strong></div>
-                <div className="modal-perk"><i className="bi bi-arrow-repeat" /> Re-download for 30 days from this browser</div>
+                <div className="modal-perk"><i className="bi bi-book-half" /> <strong>Start reading instantly</strong> — opens in your browser</div>
+                <div className="modal-perk"><i className="bi bi-shield-check" /> <strong>No downloads</strong> — watermarked & licensed to you</div>
+                <div className="modal-perk"><i className="bi bi-bookmark-check" /> Progress saved · re-read for 30 days</div>
               </div>
 
               <form onSubmit={confirm} className="modal-form">

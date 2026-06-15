@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Layout from "../components/Layout";
 import Reveal from "../components/Reveal";
+import EbookReader from "../components/EbookReader";
 import { Sparkles, BlobAccent } from "../components/Illustrations";
 import { getPurchase, hasValidAccess, getAllPurchases } from "../lib/purchases";
 import { getBookBySlug } from "../data/books";
@@ -13,7 +14,7 @@ export default function Library() {
   const [purchase, setPurchase] = useState(null);
   const [book, setBook] = useState(null);
   const [allPurchases, setAllPurchases] = useState([]);
-  const [downloadStarted, setDownloadStarted] = useState(false);
+  const [readerOpen, setReaderOpen] = useState(false);
 
   useEffect(() => {
     if (reference) {
@@ -27,43 +28,32 @@ export default function Library() {
   }, [reference]);
 
   const fmt = (d) =>
-    new Date(d).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+    new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
-  const handleDownload = () => {
-    if (!book) return;
-    setDownloadStarted(true);
-    const { type, value } = book.ebook;
-    if (type === "local") {
-      // Direct download from /ebooks/<filename>
-      const link = document.createElement("a");
-      link.href = `/ebooks/${value}`;
-      link.download = book.ebook.filename;
-      link.click();
-    } else {
-      // Drive or Dropbox — open in new tab
-      window.open(value, "_blank", "noopener,noreferrer");
-    }
-  };
+  /* ── In-reader mode: full-screen reader takes over ──────────────────── */
+  if (readerOpen && purchase && book) {
+    return (
+      <EbookReader
+        file={book.file}
+        reference={purchase.reference}
+        title={book.title}
+        watermarkText={`${purchase.name} · ${purchase.email}`}
+        onClose={() => setReaderOpen(false)}
+      />
+    );
+  }
 
-  // ── No reference param: show all purchases (your library) ──
+  /* ── /library (no ref) — show all the user's purchases ─────────────── */
   if (!reference) {
     return (
       <Layout title="My Library" description="Your purchased ebooks from Dr. Kunle Hamilton.">
         <PageHeader>
-          <h1>
-            Your <em>Library</em>
-          </h1>
-          <p>All your purchased ebooks. Bookmark this page — your downloads are saved locally on this device.</p>
+          <h1>Your <em>Library</em></h1>
+          <p>All your purchased ebooks. Bookmark this page — your purchase records are saved on this device.</p>
         </PageHeader>
 
         <section className="lib-section">
-          {allPurchases.length === 0 ? (
-            <EmptyLibrary />
-          ) : (
+          {allPurchases.length === 0 ? <EmptyLibrary /> : (
             <div className="lib-list">
               {allPurchases.map((p, i) => {
                 const b = getBookBySlug(p.bookSlug);
@@ -72,17 +62,13 @@ export default function Library() {
                 return (
                   <Reveal key={p.reference} delay={i * 0.08}>
                     <Link to={`/library/${p.reference}`} className={`lib-row${!valid ? " expired" : ""}`}>
-                      <div className="lib-row-icon"><i className="bi bi-file-earmark-pdf" /></div>
+                      <div className="lib-row-icon"><i className="bi bi-book-half" /></div>
                       <div className="lib-row-info">
                         <h3>{b.title}</h3>
-                        <p>Purchased {fmt(p.purchasedAt)} · Ref: <code>{p.reference}</code></p>
+                        <p>Purchased {fmt(p.purchasedAt)} · {b.pages} pages</p>
                       </div>
                       <div className="lib-row-status">
-                        {valid ? (
-                          <><i className="bi bi-check-circle-fill" /> Active</>
-                        ) : (
-                          <><i className="bi bi-clock-history" /> Expired</>
-                        )}
+                        {valid ? <><i className="bi bi-check-circle-fill" /> Read</> : <><i className="bi bi-clock-history" /> Expired</>}
                       </div>
                     </Link>
                   </Reveal>
@@ -95,18 +81,16 @@ export default function Library() {
     );
   }
 
-  // ── Reference exists but no purchase found ──
+  /* ── Reference exists but no purchase found ──────────────────────────── */
   if (!purchase || !book) {
     return (
       <Layout title="Library">
         <PageHeader>
-          <h1>
-            Purchase <em>not found</em>
-          </h1>
-          <p>We couldn't find a purchase with that reference. If you just bought an ebook, please make sure you're on the same device you used at checkout. Your access is saved in this browser.</p>
+          <h1>Purchase <em>not found</em></h1>
+          <p>We couldn't find a purchase with that reference. If you just bought an ebook, please make sure you're on the same device you used at checkout — your access is saved in this browser.</p>
         </PageHeader>
         <section className="lib-empty-cta">
-          <p>Reach out if you need help recovering your purchase:</p>
+          <p>Need to recover your purchase?</p>
           <div className="lib-empty-actions">
             <a href={`mailto:${SITE.email}?subject=Purchase recovery&body=Reference: ${reference}`} className="btn">
               <i className="bi bi-envelope-fill" /> Email Support
@@ -120,11 +104,14 @@ export default function Library() {
     );
   }
 
-  // ── Valid purchase found ──
+  /* ── Valid purchase: show book details + Read button ─────────────────── */
   const valid = hasValidAccess(purchase);
+  const progressKey = `dkh-progress-${purchase.reference}`;
+  const lastPage = parseInt(localStorage.getItem(progressKey), 10);
+  const hasProgress = !isNaN(lastPage) && lastPage > 1;
 
   return (
-    <Layout title={`Download: ${book.title}`} description="Your ebook is ready.">
+    <Layout title={`Read: ${book.title}`} description="Your ebook is ready to read.">
       <PageHeader>
         <div className="lib-success-icon-wrap">
           <div className="lib-success-icon">
@@ -140,11 +127,11 @@ export default function Library() {
         <h1>
           Welcome, <em>{purchase.name?.split(" ")[0] || "Reader"}</em>.
           <br />
-          Your ebook is ready.
+          Your book is ready.
         </h1>
         <p>
-          Thank you for supporting Dr. Hamilton's work. You can download your copy now —
-          and return to this page anytime within {EBOOK_DELIVERY.accessDays} days to re-download.
+          Read securely in your browser — no downloads, no installation. Your reading progress is saved automatically.
+          Return to this page anytime within {EBOOK_DELIVERY.accessDays} days.
         </p>
       </PageHeader>
 
@@ -152,34 +139,36 @@ export default function Library() {
         <div className="lib-download-card">
           <div className="lib-download-cover">
             <div className="lib-cover-num">{book.n}</div>
-            <i className="bi bi-file-earmark-pdf lib-cover-icon" />
+            <i className="bi bi-book lib-cover-icon" />
+            <div className="lib-cover-label">EBOOK</div>
           </div>
           <div className="lib-download-info">
             <div className="lib-book-tag">{book.tag}</div>
             <h2 className="lib-book-title">{book.title}</h2>
             <p className="lib-book-meta">
-              {book.pages} pages · PDF · {book.year} · {book.pub.split(" · ")[0]}
+              {book.pages} pages · {book.year} · {book.pub.split(" · ")[0]}
             </p>
             <p className="lib-book-desc">{book.longDesc || book.desc}</p>
 
             <div className="lib-download-actions">
               {valid ? (
-                <button onClick={handleDownload} className="btn lib-download-btn">
-                  <i className="bi bi-cloud-download-fill" /> Download Ebook ({book.ebook.filename})
-                </button>
+                <>
+                  <button onClick={() => setReaderOpen(true)} className="btn lib-read-btn">
+                    <i className="bi bi-book-half" /> {hasProgress ? `Continue Reading · Page ${lastPage}` : "Start Reading"}
+                  </button>
+                  {hasProgress && (
+                    <button
+                      onClick={() => { localStorage.removeItem(progressKey); setReaderOpen(true); }}
+                      className="lib-read-restart"
+                    >
+                      <i className="bi bi-arrow-counterclockwise" /> Start from beginning
+                    </button>
+                  )}
+                </>
               ) : (
                 <div className="lib-expired-note">
-                  <i className="bi bi-clock-history" /> Your access expired {fmt(new Date(new Date(purchase.purchasedAt).getTime() + EBOOK_DELIVERY.accessDays * 86400000))}. Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a> to request a fresh link.
+                  <i className="bi bi-clock-history" /> Your access expired {fmt(new Date(new Date(purchase.purchasedAt).getTime() + EBOOK_DELIVERY.accessDays * 86400000))}. Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a> to renew.
                 </div>
-              )}
-              {downloadStarted && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="lib-download-hint"
-                >
-                  <i className="bi bi-info-circle" /> {book.ebook.type === "local" ? "Download starting…" : "Opening in a new tab. If it doesn't open, please allow popups and try again."}
-                </motion.div>
               )}
             </div>
 
@@ -199,13 +188,13 @@ export default function Library() {
         <div className="lib-perks">
           <div className="lib-perk">
             <i className="bi bi-shield-check" />
-            <strong>Lifetime device access</strong>
-            <span>Re-download within {EBOOK_DELIVERY.accessDays} days from this browser</span>
+            <strong>Read securely on-site</strong>
+            <span>No downloads. Watermarked. Yours alone.</span>
           </div>
           <div className="lib-perk">
-            <i className="bi bi-envelope-open" />
-            <strong>Lost your link?</strong>
-            <span><a href={`mailto:${SITE.email}?subject=Re-download: ${purchase.reference}`}>{SITE.email}</a></span>
+            <i className="bi bi-bookmark-check" />
+            <strong>Progress auto-saved</strong>
+            <span>Pick up where you left off, any time</span>
           </div>
           <div className="lib-perk">
             <i className="bi bi-book-half" />
@@ -233,17 +222,18 @@ export default function Library() {
         .lib-download-cover { aspect-ratio: 3/4; background: linear-gradient(135deg, var(--ink) 0%, var(--ink3) 100%); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .lib-download-cover::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 70% 30%, rgba(37,99,235,0.30), transparent 60%); }
         .lib-cover-num { font-family: var(--serif); font-size: 4.5rem; font-style: italic; font-weight: 300; color: var(--gold3); position: relative; z-index: 1; }
-        .lib-cover-icon { font-size: 3rem; color: rgba(255,255,255,0.3); position: relative; z-index: 1; margin-top: 0.5rem; }
+        .lib-cover-icon { font-size: 2.6rem; color: rgba(255,255,255,0.3); position: relative; z-index: 1; margin-top: 0.5rem; }
+        .lib-cover-label { position: absolute; bottom: 1rem; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.25em; color: var(--gold3); z-index: 1; }
 
         .lib-book-tag { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; }
         .lib-book-title { font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 400; font-style: italic; line-height: 1.2; color: var(--ink); margin-bottom: 0.7rem; }
         .lib-book-meta { font-size: 0.78rem; color: var(--muted-l); margin-bottom: 1rem; }
         .lib-book-desc { font-size: 0.95rem; font-weight: 300; line-height: 1.7; color: var(--muted-l); margin-bottom: 1.8rem; }
 
-        .lib-download-btn { font-size: 0.8rem !important; padding: 1.1rem 1.8rem !important; }
-        .lib-download-actions { margin-bottom: 1.5rem; }
-        .lib-download-hint { margin-top: 0.9rem; font-size: 0.78rem; color: var(--muted-l); display: flex; align-items: center; gap: 0.5rem; }
-        .lib-download-hint i { color: var(--gold); }
+        .lib-read-btn { font-size: 0.8rem !important; padding: 1.1rem 1.8rem !important; }
+        .lib-read-restart { display: inline-flex; align-items: center; gap: 0.4rem; background: transparent; border: none; color: var(--muted-l); font-size: 0.78rem; cursor: pointer; padding: 0.7rem 0; margin-left: 1rem; transition: color 0.2s; }
+        .lib-read-restart:hover { color: var(--gold); }
+        .lib-download-actions { margin-bottom: 1.5rem; display: flex; align-items: center; flex-wrap: wrap; }
 
         .lib-expired-note { padding: 1rem 1.2rem; background: rgba(220,38,38,0.06); border-left: 3px solid #DC2626; border-radius: 4px; font-size: 0.85rem; color: var(--ink); line-height: 1.6; }
         .lib-expired-note i { color: #DC2626; }
@@ -268,7 +258,6 @@ export default function Library() {
 
         .lib-back { max-width: 980px; margin: 3rem auto 0; text-align: center; }
 
-        /* Library list view */
         .lib-section { padding: 3rem var(--gutter) 5rem; background: var(--warm); }
         .lib-list { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
         .lib-row { display: grid; grid-template-columns: 56px 1fr auto; gap: 1.5rem; align-items: center; padding: 1.3rem 1.5rem; background: var(--warm); border: 1px solid var(--border-l); border-radius: 8px; transition: all 0.3s var(--ease-out); }
@@ -277,7 +266,6 @@ export default function Library() {
         .lib-row-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--white); border-radius: 8px; font-size: 1.6rem; }
         .lib-row-info h3 { font-family: var(--serif); font-size: 1.15rem; font-weight: 400; font-style: italic; color: var(--ink); margin-bottom: 0.25rem; }
         .lib-row-info p { font-size: 0.75rem; color: var(--muted-l); }
-        .lib-row-info code { font-family: monospace; font-size: 0.7rem; background: var(--warm2); padding: 0.15rem 0.4rem; border-radius: 3px; }
         .lib-row-status { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
         .lib-row.expired .lib-row-status { color: var(--muted-l); }
 
@@ -288,8 +276,6 @@ export default function Library() {
     </Layout>
   );
 }
-
-/* ─── Small helpers ──────────────────────────────────────────────────────── */
 
 function PageHeader({ children }) {
   return (
@@ -304,12 +290,8 @@ function PageHeader({ children }) {
         .lib-header-inner p { font-size: clamp(0.95rem, 1.3vw, 1.05rem); font-weight: 300; line-height: 1.7; color: rgba(255,255,255,0.72); max-width: 600px; }
       `}</style>
       <section className="lib-header">
-        <div className="lib-header-blob">
-          <BlobAccent color="#2563EB" opacity={0.18} />
-        </div>
-        <div className="lib-header-inner">
-          {children}
-        </div>
+        <div className="lib-header-blob"><BlobAccent color="#2563EB" opacity={0.18} /></div>
+        <div className="lib-header-inner">{children}</div>
       </section>
     </>
   );

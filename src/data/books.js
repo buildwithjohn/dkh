@@ -1,11 +1,16 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // BOOKS DATA
-// Single source of truth for book listings, prices, and ebook delivery.
+// Single source of truth for book listings, prices, and reader configuration.
 //
-// ebook.type:
-//   "local"   — PDF lives in /public/ebooks/<file>.pdf  (deliver value = filename)
-//   "drive"   — Google Drive shareable link             (deliver value = full URL)
-//   "dropbox" — Dropbox shared link                     (deliver value = full URL)
+// IMPORTANT — Kindle-style READING (no downloads):
+// PDF files live in /public/ebooks/ with a hashed filename (NOT the book title).
+// This is the obscurity layer — a casual user inspecting DevTools sees only
+// the hash, not "Releasing-the-Eagle.pdf". Buyers read the book on-site in
+// the watermarked PDF.js reader at /library/[reference].
+//
+// To rotate the URL (e.g. if a hash leaks): rename the file in /public/ebooks/
+// and update the `file` field below. Live buyers' library pages will then
+// re-fetch via the new hash.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const books = [
@@ -21,13 +26,10 @@ export const books = [
     amazonLink: "https://www.amazon.com",
     pages: 168,
     year: 2018,
-    price: 4500,  // ebook price
-    physicalPrice: 8500,  // physical book price (for context, sold on request)
-    ebook: {
-      type: "drive",                                    // local | drive | dropbox
-      value: "https://drive.google.com/file/d/REPLACE_WITH_FILE_ID/view",
-      filename: "Releasing-the-Eagle-in-You.pdf",        // shown to buyer in UI
-    },
+    price: 4500,
+    physicalPrice: 8500,
+    // Reader file — hashed filename in /public/ebooks/
+    file: "/ebooks/a7f3k9-eagle.pdf",
   },
   {
     slug: "journey-to-understanding",
@@ -43,11 +45,7 @@ export const books = [
     year: 2017,
     price: 5000,
     physicalPrice: 9500,
-    ebook: {
-      type: "drive",
-      value: "https://drive.google.com/file/d/REPLACE_WITH_FILE_ID/view",
-      filename: "Journey-to-Understanding.pdf",
-    },
+    file: "/ebooks/b2m8q4-journey.pdf",
   },
   {
     slug: "new-media-and-democracy",
@@ -63,11 +61,7 @@ export const books = [
     year: 2016,
     price: 5000,
     physicalPrice: 9500,
-    ebook: {
-      type: "drive",
-      value: "https://drive.google.com/file/d/REPLACE_WITH_FILE_ID/view",
-      filename: "New-Media-and-Democracy.pdf",
-    },
+    file: "/ebooks/c5p2w7-media.pdf",
   },
   {
     slug: "nollywood-movie-subtitles",
@@ -83,11 +77,7 @@ export const books = [
     year: 2019,
     price: 4500,
     physicalPrice: 8500,
-    ebook: {
-      type: "drive",
-      value: "https://drive.google.com/file/d/REPLACE_WITH_FILE_ID/view",
-      filename: "Nollywood-Movie-Subtitles.pdf",
-    },
+    file: "/ebooks/d9r1x6-nollywood.pdf",
   },
 ];
 
