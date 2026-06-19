@@ -40,6 +40,27 @@ export function usePaystack() {
       return;
     }
 
+    // Safety net: warn before charging a real card while developing
+    const isLiveKey = PAYSTACK.publicKey.startsWith("pk_live_");
+    const isLocalhost =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1" ||
+        window.location.hostname.startsWith("192.168."));
+
+    if (isLiveKey && isLocalhost) {
+      const proceed = window.confirm(
+        "⚠️ LIVE PAYSTACK KEY DETECTED ON LOCALHOST\n\n" +
+        "You're about to make a real charge using the live key from your local machine.\n\n" +
+        "Click OK only if this is intentional (e.g., testing the live flow).\n" +
+        "Click Cancel to abort."
+      );
+      if (!proceed) {
+        if (onClose) onClose();
+        return;
+      }
+    }
+
     const handler = window.PaystackPop.setup({
       key: PAYSTACK.publicKey,
       email,

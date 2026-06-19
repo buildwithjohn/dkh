@@ -38,11 +38,10 @@ export const CONTACT_FORM = {
 };
 
 // ── PAYSTACK (Book Purchase) ──
-// 1. Get your public key from https://dashboard.paystack.com/#/settings/developer
-// 2. Use TEST key during development (starts with pk_test_)
-// 3. Replace with LIVE key (pk_live_) once Paystack approves your business
+// LIVE KEY — Paystack has approved the account.
+// Real charges will go through. Refunds are handled via the Paystack dashboard.
 export const PAYSTACK = {
-  publicKey: "pk_test_cdc139b1bcf5ca89d0afc5a86cc2083aa09aef9e",
+  publicKey: "pk_live_e3a51276316860adcb517af212a7bd2d151da9a1",
   currency: "NGN",
   merchantEmail: "info@kunlehamilton.com",
 };
